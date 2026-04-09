@@ -14,7 +14,7 @@
 The current workflow uses:
 
 ```bash
---base-href /glass_bar/
+--base-href /glass_bar_widget/
 ```
 
 If your repository name is different, update `.github/workflows/web-demo.yml`.

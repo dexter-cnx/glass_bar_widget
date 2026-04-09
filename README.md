@@ -1,10 +1,10 @@
 # GlassBar
 
-![Pub Version](https://img.shields.io/pub/v/glass_bar)
+![Pub Version](https://img.shields.io/pub/v/glass_bar_widget)
 ![Flutter](https://img.shields.io/badge/flutter-package-02569B)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![CI](https://github.com/dexter-cnx/glass_bar/actions/workflows/ci.yml/badge.svg)
-![Web Demo](https://github.com/dexter-cnx/glass_bar/actions/workflows/web-demo.yml/badge.svg)
+![CI](https://github.com/dexter-cnx/glass_bar_widget/actions/workflows/ci.yml/badge.svg)
+![Web Demo](https://github.com/dexter-cnx/glass_bar_widget/actions/workflows/web-demo.yml/badge.svg)
 
 A production-ready Flutter package for glassmorphism navigation bars with horizontal and vertical layouts, pinned panels by default, optional auto-hide, flexible theming, and a GitHub Pages web demo.
 
@@ -99,10 +99,10 @@ Use GitHub Actions Pages deployment from `example/`.
 Repository name example:
 
 ```text
-https://dexter-cnx.github.io/glass_bar/
+https://dexter-cnx.github.io/glass_bar_widget/
 ```
 
-If your repo name differs from `glass_bar`, update the `--base-href` value in `.github/workflows/web-demo.yml`.
+If your repo name differs from `glass_bar_widget`, update the `--base-href` value in `.github/workflows/web-demo.yml`.
 
 ## Publish checklist
 
