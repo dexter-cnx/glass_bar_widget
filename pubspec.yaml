@@ -1,0 +1,27 @@
+name: glass_bar
+description: A customizable glassmorphism navigation bar for Flutter with horizontal and vertical layouts, pinned or auto-hide panels, and flexible theming.
+version: 1.0.0
+homepage: https://github.com/dexter-cnx/glass_bar
+repository: https://github.com/dexter-cnx/glass_bar
+issue_tracker: https://github.com/dexter-cnx/glass_bar/issues
+topics:
+  - flutter
+  - navigation
+  - glassmorphism
+  - sidebar
+  - bottom-navigation
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
