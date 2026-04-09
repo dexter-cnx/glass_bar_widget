@@ -2,22 +2,6 @@ import 'package:flutter/material.dart';
 
 @immutable
 class GlassBarThemeData {
-  final Color backgroundColor;
-  final Color selectedItemBackgroundColor;
-  final Color selectedItemColor;
-  final Color unselectedItemColor;
-  final double blur;
-  final double borderRadius;
-  final BorderSide borderSide;
-  final TextStyle labelStyle;
-  final Color panelBackgroundColor;
-  final double panelBlur;
-  final double panelBorderRadius;
-  final BorderSide panelBorderSide;
-  final EdgeInsetsGeometry barPadding;
-  final EdgeInsetsGeometry panelPadding;
-  final List<BoxShadow> boxShadows;
-
   const GlassBarThemeData({
     this.backgroundColor = const Color(0x1F9E9E9E),
     this.selectedItemBackgroundColor = const Color(0x33FFFFFF),
@@ -44,6 +28,21 @@ class GlassBarThemeData {
       ),
     ],
   });
+  final Color backgroundColor;
+  final Color selectedItemBackgroundColor;
+  final Color selectedItemColor;
+  final Color unselectedItemColor;
+  final double blur;
+  final double borderRadius;
+  final BorderSide borderSide;
+  final TextStyle labelStyle;
+  final Color panelBackgroundColor;
+  final double panelBlur;
+  final double panelBorderRadius;
+  final BorderSide panelBorderSide;
+  final EdgeInsetsGeometry barPadding;
+  final EdgeInsetsGeometry panelPadding;
+  final List<BoxShadow> boxShadows;
 
   GlassBarThemeData copyWith({
     Color? backgroundColor,

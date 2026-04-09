@@ -1,4 +1,4 @@
-library glass_bar;
+library;
 
 export 'src/glass_bar.dart';
 export 'src/glass_bar_item.dart';
