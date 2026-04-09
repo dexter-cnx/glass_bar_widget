@@ -10,8 +10,6 @@ PACKAGE_NAME="${PACKAGE_NAME:-com.example.glass_bar_example}"
 ACTIVITY_NAME="${ACTIVITY_NAME:-.MainActivity}"
 SCREENSHOT_DELAY_MS="${SCREENSHOT_DELAY_MS:-180}"
 FRAME_PAUSE_MS="${FRAME_PAUSE_MS:-900}"
-SKIP_BUILD_INSTALL="${SKIP_BUILD_INSTALL:-false}"
-START_DELAY_SECONDS="${START_DELAY_SECONDS:-10}"
 
 mkdir -p "$FRAMES_DIR"
 find "$FRAMES_DIR" -maxdepth 1 -type f -name 'frame_*.png' -delete
@@ -86,23 +84,15 @@ launch_app() {
 }
 
 main() {
-  if [ "$SKIP_BUILD_INSTALL" != "true" ]; then
-    build_app
-  else
-    log "Skipping build and install."
-  fi
+  #build_app
 
   log "Waiting for Android emulator..."
   wait_for_boot
   adb shell input keyevent 82 >/dev/null || true
 
-  if [ "$SKIP_BUILD_INSTALL" != "true" ]; then
-    install_app
-    launch_app
-  fi
-
-  log "Waiting ${START_DELAY_SECONDS}s before capture..."
-  sleep "$START_DELAY_SECONDS"
+  install_app
+  launch_app
+  sleep 10
 
   local frame=0
   capture_frame "$(printf '%03d' "$frame")"
