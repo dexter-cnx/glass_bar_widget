@@ -31,6 +31,7 @@ class GlassBarItem {
 
   Widget get effectiveIcon => iconData != null ? Icon(iconData) : icon!;
   Widget get effectiveLabel => labelText != null ? Text(labelText!) : label!;
-  String get effectiveSemanticLabel => semanticLabel ?? labelText ?? 'Navigation item';
+  String get effectiveSemanticLabel =>
+      semanticLabel ?? labelText ?? 'Navigation item';
   String get effectiveTooltip => tooltip ?? labelText ?? 'Navigation item';
 }
