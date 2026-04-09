@@ -76,33 +76,123 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // return Scaffold(
+    //   extendBody: true,
+    //   body: Stack(
+    //     children: <Widget>[
+    //       Container(
+    //         decoration: const BoxDecoration(
+    //           gradient: LinearGradient(
+    //             begin: Alignment.topLeft,
+    //             end: Alignment.bottomRight,
+    //             colors: <Color>[Color(0xFF1A1A2E), Color(0xFF16213E)],
+    //           ),
+    //         ),
+    //       ),
+    //       Positioned.fill(
+    //         child: SafeArea(
+    //           child: Padding(
+    //             padding: const EdgeInsets.fromLTRB(100, 40, 20, 0),
+    //             child: Column(
+    //               crossAxisAlignment: CrossAxisAlignment.start,
+    //               children: <Widget>[
+    //                 Text(
+    //                   'Glass Bar Demo',
+    //                   style:
+    //                       Theme.of(context).textTheme.headlineMedium?.copyWith(
+    //                             fontWeight: FontWeight.bold,
+    //                             color: Colors.white,
+    //                           ),
+    //                 ),
+    //                 const SizedBox(height: 8),
+    //                 const Text(
+    //                   'Flexible GlassBar supporting orientations and theming.',
+    //                   style: TextStyle(color: Colors.white70, fontSize: 16),
+    //                 ),
+    //                 const SizedBox(height: 30),
+    //                 Expanded(
+    //                   child: GridView.builder(
+    //                     gridDelegate:
+    //                         const SliverGridDelegateWithFixedCrossAxisCount(
+    //                       crossAxisCount: 2,
+    //                       childAspectRatio: 1.1,
+    //                       crossAxisSpacing: 16,
+    //                       mainAxisSpacing: 16,
+    //                     ),
+    //                     itemCount: 6,
+    //                     itemBuilder: (context, index) => _buildCard(index),
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //         ),
+    //       ),
+    //       Positioned(
+    //         left: 20,
+    //         top: 100,
+    //         bottom: 100,
+    //         child: Align(
+    //           alignment: Alignment.centerLeft,
+    //           child: GlassBar(
+    //             orientation: Axis.vertical,
+    //             selectedIndex: _vIndex,
+    //             items: _navItems,
+    //             onTabChanged: (index) {
+    //               setState(() => _vIndex = index);
+    //             },
+    //             maxExtent: 500,
+    //           ),
+    //         ),
+    //       ),
+    //       Positioned(
+    //         left: 100,
+    //         right: 20,
+    //         bottom: 24,
+    //         child: Align(
+    //           alignment: Alignment.bottomCenter,
+    //           child: GlassBar(
+    //             orientation: Axis.horizontal,
+    //             selectedIndex: _hIndex,
+    //             items: _navItems,
+    //             onTabChanged: (index) {
+    //               setState(() => _hIndex = index);
+    //             },
+    //             iconAfterLabel: true,
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
     return Scaffold(
       extendBody: true,
       body: Stack(
-        children: <Widget>[
+        children: [
+          // Background Gradient
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: <Color>[Color(0xFF1A1A2E), Color(0xFF16213E)],
+                colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
               ),
             ),
           ),
+          // Main Content Layer
           Positioned.fill(
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(100, 40, 20, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+                  children: [
                     Text(
                       'Glass Bar Demo',
-                      style:
-                          Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                     ),
                     const SizedBox(height: 8),
                     const Text(
@@ -128,7 +218,7 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
               ),
             ),
           ),
-          Positioned(
+                 Positioned(
             left: 20,
             top: 100,
             bottom: 100,
@@ -162,6 +252,40 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
               ),
             ),
           ),
+          // Vertical GlassBar (Sidebar)
+          // Positioned(
+          //   left: 20,
+          //   top: 100,
+          //   bottom: 100,
+          //   child: Align(
+          //     alignment: Alignment.centerLeft,
+          //     child: GlassBar(
+          //       orientation: Axis.vertical,
+          //       selectedIndex: _vIndex,
+          //       items: _navItems,
+          //       //onTabChanged: _onVChanged,
+          //       panelAnimation: _vAnimation,
+          //       maxBar: 500,
+          //     ),
+          //   ),
+          // ),
+          // // Horizontal GlassBar (Bottom bar)
+          // Positioned(
+          //   left: 100,
+          //   right: 20,
+          //   bottom: 24,
+          //   child: Align(
+          //     alignment: Alignment.bottomCenter,
+          //     child: GlassBar(
+          //       orientation: Axis.horizontal,
+          //       selectedIndex: _hIndex,
+          //       items: _navItems,
+          //       onTabChanged: _onHChanged,
+          //       panelAnimation: _hAnimation,
+          //       iconAfterLabel: true,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -211,7 +335,7 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
   }
 
   Widget _buildCard(int index) {
-    final colors = <Color>[
+    final colors = [
       Colors.purpleAccent,
       Colors.cyanAccent,
       Colors.amberAccent,
@@ -220,14 +344,14 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withValues(alpha: 0.3),
         border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Center(
         child: Icon(
           Icons.star_rounded,
           size: 40,
-          color: colors[index % 4].withValues(alpha: 0.3),
+          color: colors[index % 4].withValues(alpha: 0.8),
         ),
       ),
     ).animate().scale(duration: 400.ms, curve: Curves.easeOut);

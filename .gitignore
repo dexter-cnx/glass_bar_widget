@@ -5,3 +5,5 @@ build/
 coverage/
 example/.dart_tool/
 example/build/
+tool/media/node_modules
+example/android
