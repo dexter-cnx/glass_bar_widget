@@ -3,7 +3,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/../.."
 
-OUT_DIR="docs/media"
+OUT_DIR="doc/media"
 FRAMES_DIR="$OUT_DIR/frames"
 APK_PATH="example/build/app/outputs/flutter-apk/app-debug.apk"
 PACKAGE_NAME="${PACKAGE_NAME:-com.example.glass_bar_example}"

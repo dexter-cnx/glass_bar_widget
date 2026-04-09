@@ -8,7 +8,7 @@
 
 A production-ready Flutter package for glassmorphism navigation bars with horizontal and vertical layouts, pinned panels by default, optional auto-hide, flexible theming, and a GitHub Pages web demo.
 
-![GlassBar demo animation](https://raw.githubusercontent.com/dexter-cnx/glass_bar_widget/main/docs/media/glass_bar_demo.gif)
+![GlassBar demo animation](https://raw.githubusercontent.com/dexter-cnx/glass_bar_widget/main/doc/media/glass_bar_demo.gif)
 
 ## Features
 
@@ -112,4 +112,4 @@ See [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md).
 
 ## Branch protection
 
-See [docs/BRANCH_PROTECTION_CHECKLIST.md](docs/BRANCH_PROTECTION_CHECKLIST.md).
+See [doc/BRANCH_PROTECTION_CHECKLIST.md](doc/BRANCH_PROTECTION_CHECKLIST.md).

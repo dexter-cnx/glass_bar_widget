@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
-const outDir = path.resolve('docs/media');
+const outDir = path.resolve('doc/media');
 const framesDir = path.join(outDir, 'frames');
 const demoUrl = process.env.DEMO_URL ?? 'http://127.0.0.1:8080';
 const headless = (process.env.HEADLESS ?? 'false').toLowerCase() === 'true';

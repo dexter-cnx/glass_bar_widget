@@ -14,7 +14,7 @@ except ImportError as exc:
     ) from exc
 
 
-OUT_DIR = Path("docs/media")
+OUT_DIR = Path("doc/media")
 FRAMES_DIR = OUT_DIR / "frames"
 DEMO_URL = os.environ.get("DEMO_URL", "http://127.0.0.1:8080")
 HEADLESS = os.environ.get("HEADLESS", "false").lower() in {"1", "true", "yes"}
