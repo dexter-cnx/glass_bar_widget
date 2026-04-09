@@ -2,8 +2,8 @@
 
 This repository includes media tooling for generating:
 
-- `docs/media/glass_bar_demo.png`
-- `docs/media/glass_bar_demo.gif`
+- `doc/media/glass_bar_demo.png`
+- `doc/media/glass_bar_demo.gif`
 
 ## How it works
 
@@ -12,7 +12,7 @@ This repository includes media tooling for generating:
 3. Install and launch the app on the emulator.
 4. Capture frames directly from the emulator screen with `adb shell screencap -p` plus `adb pull`.
 5. Use `ffmpeg` to convert the frames into a GIF.
-6. Save the generated assets in `docs/media/`.
+6. Save the generated assets in `doc/media/`.
 
 ## Local run
 

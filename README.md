@@ -1,14 +1,14 @@
 # GlassBar
 
-![Pub Version](https://img.shields.io/pub/v/glass_bar_widget)
+![Pub Version](https://img.shields.io/pub/v/glass_bar)
 ![Flutter](https://img.shields.io/badge/flutter-package-02569B)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![CI](https://github.com/dexter-cnx/glass_bar_widget/actions/workflows/ci.yml/badge.svg)
 ![Web Demo](https://github.com/dexter-cnx/glass_bar_widget/actions/workflows/web-demo.yml/badge.svg)
 
-A production-ready Flutter package for glassmorphism navigation bars with horizontal and vertical layouts, pinned panels by default, optional auto-hide, flexible theming, and a GitHub Pages web demo.
+GlassBar is a Flutter navigation bar package with glassmorphism styling, horizontal and vertical layouts, pinned panels by default, optional auto-hide, and flexible theming.
 
-![GlassBar demo animation](https://raw.githubusercontent.com/dexter-cnx/glass_bar_widget/main/docs/media/glass_bar_demo.gif)
+![GlassBar demo animation](https://raw.githubusercontent.com/dexter-cnx/glass_bar_widget/main/doc/media/glass_bar_demo.gif)
 
 ## Features
 
@@ -18,7 +18,7 @@ A production-ready Flutter package for glassmorphism navigation bars with horizo
 - Controlled and uncontrolled selection modes
 - Flexible theming via `GlassBarThemeData`
 - Accessibility support with tooltips and semantics
-- GitHub Actions CI and GitHub Pages demo workflow
+- GitHub Actions CI and a GitHub Pages demo
 
 ## Install
 
@@ -112,4 +112,4 @@ See [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md).
 
 ## Branch protection
 
-See [docs/BRANCH_PROTECTION_CHECKLIST.md](docs/BRANCH_PROTECTION_CHECKLIST.md).
+See [doc/BRANCH_PROTECTION_CHECKLIST.md](doc/BRANCH_PROTECTION_CHECKLIST.md).

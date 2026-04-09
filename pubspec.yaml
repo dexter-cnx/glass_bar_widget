@@ -11,6 +11,12 @@ topics:
   - sidebar
   - bottom-navigation
 
+screenshots:
+  - description: GlassBar demo animation showing the navigation bar and panel interactions.
+    path: doc/media/glass_bar_demo.gif
+  - description: GlassBar demo screenshot showing the glassmorphism navigation layout.
+    path: doc/media/glass_bar_demo.png
+
 environment:
   sdk: ">=3.3.0 <4.0.0"
   flutter: ">=3.22.0"
