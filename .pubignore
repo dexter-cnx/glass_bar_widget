@@ -1,0 +1,4 @@
+tool/**
+doc/media/frames/**
+doc/media/raw-frames/**
+build/**

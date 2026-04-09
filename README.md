@@ -1,6 +1,6 @@
 # GlassBar
 
-![Pub Version](https://img.shields.io/pub/v/glass_bar_widget)
+![Pub Version](https://img.shields.io/pub/v/glass_bar)
 ![Flutter](https://img.shields.io/badge/flutter-package-02569B)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![CI](https://github.com/dexter-cnx/glass_bar_widget/actions/workflows/ci.yml/badge.svg)
