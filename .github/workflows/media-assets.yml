@@ -16,9 +16,6 @@ permissions:
 jobs:
   generate-media:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: glass_bar/example
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,49 +27,42 @@ jobs:
         with:
           channel: stable
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - name: Build Android demo
+        working-directory: example
+        run: |
+          flutter pub get
+          flutter build apk --debug
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Capture media in Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
         with:
-          node-version: '20'
-
-      - name: Install Playwright browser
-        run: |
-          npm init -y
-          npm install playwright
-          npx playwright install --with-deps chromium
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build web demo
-        run: flutter build web --release
-
-      - name: Serve demo
-        run: |
-          python3 -m http.server 8080 --directory build/web >/tmp/glass_bar_demo_server.log 2>&1 &
-          echo $! > /tmp/glass_bar_demo_server.pid
-
-      - name: Generate screenshot frames
-        working-directory: glass_bar
-        run: |
-          node tool/media/capture_web_demo.mjs
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none -no-snapshot-save
+          disable-animations: true
+          script: bash tool/media/capture_android_emulator.sh
 
       - name: Generate GIF
-        working-directory: glass_bar
-        run: |
-          bash tool/media/make_demo_gif.sh
+        run: bash tool/media/make_demo_gif.sh
 
       - name: Upload media artifacts
         uses: actions/upload-artifact@v4
         with:
           name: glass-bar-media
           path: |
-            glass_bar/docs/media/glass_bar_demo.png
-            glass_bar/docs/media/glass_bar_demo.gif
-            glass_bar/docs/media/frames
+            docs/media/glass_bar_demo.png
+            docs/media/glass_bar_demo.gif
+            docs/media/frames
 
       - name: Commit generated media
-        working-directory: glass_bar
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com

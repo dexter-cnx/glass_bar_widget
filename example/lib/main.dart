@@ -79,23 +79,25 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
     return Scaffold(
       extendBody: true,
       body: Stack(
-        children: <Widget>[
+        children: [
+          // Background Gradient
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: <Color>[Color(0xFF1A1A2E), Color(0xFF16213E)],
+                colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
               ),
             ),
           ),
+          // Main Content Layer
           Positioned.fill(
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(100, 40, 20, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+                  children: [
                     Text(
                       'Glass Bar Demo',
                       style:
@@ -211,7 +213,7 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
   }
 
   Widget _buildCard(int index) {
-    final colors = <Color>[
+    final colors = [
       Colors.purpleAccent,
       Colors.cyanAccent,
       Colors.amberAccent,
@@ -220,14 +222,14 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withValues(alpha: 0.3),
         border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Center(
         child: Icon(
           Icons.star_rounded,
           size: 40,
-          color: colors[index % 4].withValues(alpha: 0.3),
+          color: colors[index % 4].withValues(alpha: 0.8),
         ),
       ),
     ).animate().scale(duration: 400.ms, curve: Curves.easeOut);
