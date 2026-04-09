@@ -8,25 +8,6 @@ import 'glass_bar_theme.dart';
 
 @immutable
 class GlassBar extends StatefulWidget {
-  final int? selectedIndex;
-  final List<GlassBarItem> items;
-  final ValueChanged<int?>? onTabChanged;
-  final Axis orientation;
-  final bool rotateLabelInVertical;
-  final bool iconAfterLabel;
-  final double? maxExtent;
-  final GlassBarThemeData? theme;
-  final Duration itemAnimationDuration;
-  final Curve itemAnimationCurve;
-  final Duration panelShowDuration;
-  final Duration panelHideDuration;
-  final Duration? panelAutoHideDuration;
-  final Curve panelAnimationCurve;
-  final int? initialIndex;
-  final bool deselectOnTapWhenSelected;
-  final bool expandSelectedItem;
-  final double? verticalPanelMaxWidth;
-
   const GlassBar({
     super.key,
     required this.items,
@@ -58,6 +39,25 @@ class GlassBar extends StatefulWidget {
               (initialIndex >= 0 && initialIndex < items.length),
           'initialIndex is out of range',
         );
+
+  final int? selectedIndex;
+  final List<GlassBarItem> items;
+  final ValueChanged<int?>? onTabChanged;
+  final Axis orientation;
+  final bool rotateLabelInVertical;
+  final bool iconAfterLabel;
+  final double? maxExtent;
+  final GlassBarThemeData? theme;
+  final Duration itemAnimationDuration;
+  final Curve itemAnimationCurve;
+  final Duration panelShowDuration;
+  final Duration panelHideDuration;
+  final Duration? panelAutoHideDuration;
+  final Curve panelAnimationCurve;
+  final int? initialIndex;
+  final bool deselectOnTapWhenSelected;
+  final bool expandSelectedItem;
+  final double? verticalPanelMaxWidth;
 
   bool get isControlled => onTabChanged != null;
 
