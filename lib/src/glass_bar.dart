@@ -8,25 +8,6 @@ import 'glass_bar_theme.dart';
 
 @immutable
 class GlassBar extends StatefulWidget {
-  final int? selectedIndex;
-  final List<GlassBarItem> items;
-  final ValueChanged<int?>? onTabChanged;
-  final Axis orientation;
-  final bool rotateLabelInVertical;
-  final bool iconAfterLabel;
-  final double? maxExtent;
-  final GlassBarThemeData? theme;
-  final Duration itemAnimationDuration;
-  final Curve itemAnimationCurve;
-  final Duration panelShowDuration;
-  final Duration panelHideDuration;
-  final Duration? panelAutoHideDuration;
-  final Curve panelAnimationCurve;
-  final int? initialIndex;
-  final bool deselectOnTapWhenSelected;
-  final bool expandSelectedItem;
-  final double? verticalPanelMaxWidth;
-
   const GlassBar({
     super.key,
     required this.items,
@@ -49,13 +30,34 @@ class GlassBar extends StatefulWidget {
     this.verticalPanelMaxWidth = 240,
   })  : assert(items.length > 0, 'items must not be empty'),
         assert(
-          selectedIndex == null || (selectedIndex >= 0 && selectedIndex < items.length),
+          selectedIndex == null ||
+              (selectedIndex >= 0 && selectedIndex < items.length),
           'selectedIndex is out of range',
         ),
         assert(
-          initialIndex == null || (initialIndex >= 0 && initialIndex < items.length),
+          initialIndex == null ||
+              (initialIndex >= 0 && initialIndex < items.length),
           'initialIndex is out of range',
         );
+
+  final int? selectedIndex;
+  final List<GlassBarItem> items;
+  final ValueChanged<int?>? onTabChanged;
+  final Axis orientation;
+  final bool rotateLabelInVertical;
+  final bool iconAfterLabel;
+  final double? maxExtent;
+  final GlassBarThemeData? theme;
+  final Duration itemAnimationDuration;
+  final Curve itemAnimationCurve;
+  final Duration panelShowDuration;
+  final Duration panelHideDuration;
+  final Duration? panelAutoHideDuration;
+  final Curve panelAnimationCurve;
+  final int? initialIndex;
+  final bool deselectOnTapWhenSelected;
+  final bool expandSelectedItem;
+  final double? verticalPanelMaxWidth;
 
   bool get isControlled => onTabChanged != null;
 
@@ -63,7 +65,8 @@ class GlassBar extends StatefulWidget {
   State<GlassBar> createState() => _GlassBarState();
 }
 
-class _GlassBarState extends State<GlassBar> with SingleTickerProviderStateMixin {
+class _GlassBarState extends State<GlassBar>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _panelController;
   late Animation<double> _panelAnimation;
   Timer? _autoHideTimer;
@@ -154,7 +157,8 @@ class _GlassBarState extends State<GlassBar> with SingleTickerProviderStateMixin
 
   void _handleTap(int index) {
     final current = _effectiveIndex;
-    final next = (widget.deselectOnTapWhenSelected && current == index) ? null : index;
+    final next =
+        (widget.deselectOnTapWhenSelected && current == index) ? null : index;
     _setSelectedIndex(next);
   }
 
@@ -188,7 +192,9 @@ class _GlassBarState extends State<GlassBar> with SingleTickerProviderStateMixin
       animation: _panelAnimation,
       builder: (context, _) {
         final displayIndex = _effectiveIndex ?? _lastValidIndex;
-        final content = displayIndex == null ? null : widget.items[displayIndex].panelContent;
+        final content = displayIndex == null
+            ? null
+            : widget.items[displayIndex].panelContent;
         if (content == null || _panelAnimation.value == 0) {
           return const SizedBox.shrink();
         }
@@ -214,11 +220,13 @@ class _GlassBarState extends State<GlassBar> with SingleTickerProviderStateMixin
                   child: Container(
                     constraints: _isHorizontal
                         ? null
-                        : BoxConstraints(maxWidth: widget.verticalPanelMaxWidth ?? 240),
+                        : BoxConstraints(
+                            maxWidth: widget.verticalPanelMaxWidth ?? 240),
                     padding: _theme.panelPadding,
                     decoration: BoxDecoration(
                       color: _theme.panelBackgroundColor,
-                      borderRadius: BorderRadius.circular(_theme.panelBorderRadius),
+                      borderRadius:
+                          BorderRadius.circular(_theme.panelBorderRadius),
                       border: Border.fromBorderSide(_theme.panelBorderSide),
                     ),
                     child: content,
@@ -251,7 +259,8 @@ class _GlassBarState extends State<GlassBar> with SingleTickerProviderStateMixin
       ),
       child: Flex(
         direction: _isHorizontal ? Axis.horizontal : Axis.vertical,
-        mainAxisSize: widget.maxExtent != null ? MainAxisSize.max : MainAxisSize.min,
+        mainAxisSize:
+            widget.maxExtent != null ? MainAxisSize.max : MainAxisSize.min,
         children: List<Widget>.generate(widget.items.length, (index) {
           final isSelected = _effectiveIndex == index;
           Widget itemWidget = _buildInteractiveItem(index, isSelected);
@@ -333,7 +342,8 @@ class _GlassBarState extends State<GlassBar> with SingleTickerProviderStateMixin
 
   List<Widget> _buildItemContent(int index, bool isSelected) {
     final item = widget.items[index];
-    final color = isSelected ? _theme.selectedItemColor : _theme.unselectedItemColor;
+    final color =
+        isSelected ? _theme.selectedItemColor : _theme.unselectedItemColor;
     final iconWidget = IconTheme(
       data: IconThemeData(color: color, size: 24),
       child: item.effectiveIcon,
@@ -354,7 +364,8 @@ class _GlassBarState extends State<GlassBar> with SingleTickerProviderStateMixin
       ),
     );
 
-    final spacing = SizedBox(width: _isHorizontal ? 8 : 0, height: _isHorizontal ? 0 : 8);
+    final spacing =
+        SizedBox(width: _isHorizontal ? 8 : 0, height: _isHorizontal ? 0 : 8);
     return widget.iconAfterLabel
         ? <Widget>[labelWidget, spacing, iconWidget]
         : <Widget>[iconWidget, spacing, labelWidget];
