@@ -54,12 +54,7 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
         tooltip: 'Components',
         panelContent: _buildPanelContent(
           'UI Components',
-          <String>[
-            'Glass Card',
-            'Neumorphic Button',
-            'Floating Action',
-            'Animated List'
-          ],
+          <String>['Glass Card', 'Neumorphic Button', 'Floating Action', 'Animated List'],
         ),
       ),
       GlassBarItem(
@@ -98,11 +93,10 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
                   children: <Widget>[
                     Text(
                       'Glass Bar Demo',
-                      style:
-                          Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                     ),
                     const SizedBox(height: 8),
                     const Text(
@@ -112,8 +106,7 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
                     const SizedBox(height: 30),
                     Expanded(
                       child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 1.1,
                           crossAxisSpacing: 16,

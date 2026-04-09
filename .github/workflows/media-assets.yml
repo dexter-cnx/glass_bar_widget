@@ -1,0 +1,82 @@
+name: media-assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'example/**'
+      - 'lib/**'
+      - 'tool/media/**'
+      - '.github/workflows/media-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  generate-media:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: glass_bar/example
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright browser
+        run: |
+          npm init -y
+          npm install playwright
+          npx playwright install --with-deps chromium
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build web demo
+        run: flutter build web --release
+
+      - name: Serve demo
+        run: |
+          python3 -m http.server 8080 --directory build/web >/tmp/glass_bar_demo_server.log 2>&1 &
+          echo $! > /tmp/glass_bar_demo_server.pid
+
+      - name: Generate screenshot frames
+        working-directory: glass_bar
+        run: |
+          node tool/media/capture_web_demo.mjs
+
+      - name: Generate GIF
+        working-directory: glass_bar
+        run: |
+          bash tool/media/make_demo_gif.sh
+
+      - name: Upload media artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: glass-bar-media
+          path: |
+            glass_bar/docs/media/glass_bar_demo.png
+            glass_bar/docs/media/glass_bar_demo.gif
+            glass_bar/docs/media/frames
+
+      - name: Commit generated media
+        working-directory: glass_bar
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add docs/media/glass_bar_demo.png docs/media/glass_bar_demo.gif
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(media): refresh generated demo assets"
+          git push

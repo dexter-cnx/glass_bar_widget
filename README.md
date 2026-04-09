@@ -111,3 +111,13 @@ See [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md).
 ## Branch protection
 
 See [docs/BRANCH_PROTECTION_CHECKLIST.md](docs/BRANCH_PROTECTION_CHECKLIST.md).
+
+
+## Auto-generated media
+
+This package includes a GitHub Actions workflow that builds the Flutter web demo and refreshes:
+
+- `docs/media/glass_bar_demo.png`
+- `docs/media/glass_bar_demo.gif`
+
+See `docs/MEDIA_AUTOGEN.md` for setup and customization.
