@@ -222,14 +222,41 @@ class _GlassBarState extends State<GlassBar>
                         ? null
                         : BoxConstraints(
                             maxWidth: widget.verticalPanelMaxWidth ?? 240),
-                    padding: _theme.panelPadding,
                     decoration: BoxDecoration(
                       color: _theme.panelBackgroundColor,
                       borderRadius:
                           BorderRadius.circular(_theme.panelBorderRadius),
                       border: Border.fromBorderSide(_theme.panelBorderSide),
                     ),
-                    child: content,
+                    child: Stack(
+                      children: <Widget>[
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  _theme.panelBorderRadius,
+                                ),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: <Color>[
+                                    Colors.white.withValues(alpha: 0.18),
+                                    Colors.white.withValues(alpha: 0.06),
+                                    Colors.white.withValues(alpha: 0.015),
+                                  ],
+                                  stops: const <double>[0, 0.42, 1],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: _theme.panelPadding,
+                          child: content,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -329,8 +356,14 @@ class _GlassBarState extends State<GlassBar>
                 curve: widget.itemAnimationCurve,
                 child: Flex(
                   direction: _isHorizontal ? Axis.horizontal : Axis.vertical,
-                  mainAxisSize: MainAxisSize.min,
-                  children: _buildItemContent(index, isSelected),
+                  mainAxisSize: (widget.maxExtent != null && isSelected)
+                      ? MainAxisSize.max
+                      : MainAxisSize.min,
+                  children: _buildItemContent(
+                    index,
+                    isSelected,
+                    useExpanded: widget.maxExtent != null,
+                  ),
                 ),
               ),
             ),
@@ -340,7 +373,11 @@ class _GlassBarState extends State<GlassBar>
     );
   }
 
-  List<Widget> _buildItemContent(int index, bool isSelected) {
+  List<Widget> _buildItemContent(
+    int index,
+    bool isSelected, {
+    bool useExpanded = false,
+  }) {
     final item = widget.items[index];
     final color =
         isSelected ? _theme.selectedItemColor : _theme.unselectedItemColor;
@@ -353,16 +390,17 @@ class _GlassBarState extends State<GlassBar>
       return <Widget>[iconWidget];
     }
 
-    final labelWidget = Flexible(
-      child: DefaultTextStyle(
-        style: _theme.labelStyle.copyWith(color: color),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
-        child: (!_isHorizontal && widget.rotateLabelInVertical)
-            ? RotatedBox(quarterTurns: 3, child: item.effectiveLabel)
-            : item.effectiveLabel,
-      ),
+    final labelChild = DefaultTextStyle(
+      style: _theme.labelStyle.copyWith(color: color),
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
+      child: (!_isHorizontal && widget.rotateLabelInVertical)
+          ? RotatedBox(quarterTurns: 3, child: item.effectiveLabel)
+          : item.effectiveLabel,
     );
+    final labelWidget = useExpanded
+        ? Expanded(child: labelChild)
+        : Flexible(child: labelChild);
 
     final spacing =
         SizedBox(width: _isHorizontal ? 8 : 0, height: _isHorizontal ? 0 : 8);

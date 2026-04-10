@@ -3,172 +3,70 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:glass_bar/glass_bar.dart';
 
 void main() {
-  runApp(const GlassBarFeatureApp());
+  runApp(const GlassBarShowcaseApp());
 }
 
-class GlassBarFeatureApp extends StatelessWidget {
-  const GlassBarFeatureApp({super.key});
+// ─── App ──────────────────────────────────────────────────────────────────────
+
+class GlassBarShowcaseApp extends StatelessWidget {
+  const GlassBarShowcaseApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Glass Bar Feature Showcase',
+      title: 'Glass Bar Showcase',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(useMaterial3: true).copyWith(
         scaffoldBackgroundColor: const Color(0xFF070A12),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF64B5F6),
+          surface: Color(0xFF0F1729),
+        ),
       ),
-      home: const FeatureShowcaseScreen(),
+      home: const ShowcaseShell(),
     );
   }
 }
 
-class FeatureShowcaseScreen extends StatefulWidget {
-  const FeatureShowcaseScreen({super.key});
+// ─── Shell ────────────────────────────────────────────────────────────────────
+
+class ShowcaseShell extends StatefulWidget {
+  const ShowcaseShell({super.key});
 
   @override
-  State<FeatureShowcaseScreen> createState() => _FeatureShowcaseScreenState();
+  State<ShowcaseShell> createState() => _ShowcaseShellState();
 }
 
-class _FeatureShowcaseScreenState extends State<FeatureShowcaseScreen> {
-  static const double _kPanelWidthMin = 180;
-  static const double _kPanelWidthMax = 360;
-  static const double _kHorizontalExtentMin = 280;
-  static const double _kHorizontalExtentMax = 760;
-  static const double _kVerticalExtentMin = 280;
-  static const double _kVerticalExtentMax = 560;
+class _ShowcaseShellState extends State<ShowcaseShell> {
+  int _pageIndex = 0;
 
-  late final List<GlassBarItem> _items;
-
-  Axis _orientation = Axis.horizontal;
-  bool _rotateLabelInVertical = true;
-  bool _iconAfterLabel = false;
-  bool _expandSelectedItem = true;
-  bool _deselectOnTapWhenSelected = true;
-  bool _useMaxExtent = true;
-  bool _useCustomTheme = true;
-  bool _useControlledMode = false;
-  bool _useAutoHide = false;
-
-  int? _uncontrolledIndex = 0;
-  int? _controlledIndex;
-
-  double _horizontalMaxExtent = 540;
-  double _verticalMaxExtent = 420;
-  double _verticalPanelMaxWidth = 250;
-
-  Duration _itemAnimationDuration = const Duration(milliseconds: 280);
-  Curve _itemAnimationCurve = Curves.easeInOut;
-  Duration _panelShowDuration = const Duration(milliseconds: 450);
-  Duration _panelHideDuration = const Duration(milliseconds: 250);
-  Curve _panelAnimationCurve = Curves.easeOutCubic;
-  Duration _panelAutoHideDuration = const Duration(seconds: 2);
-
-  final List<_CurvePreset> _curvePresets = const <_CurvePreset>[
-    _CurvePreset('Ease In Out', Curves.easeInOut),
-    _CurvePreset('Ease Out Cubic', Curves.easeOutCubic),
-    _CurvePreset('Fast Out Slow In', Curves.fastOutSlowIn),
-    _CurvePreset('Elastic Out', Curves.elasticOut),
+  static const List<({String label, IconData icon})> _pages = [
+    (label: 'Basic', icon: Icons.phone_android_rounded),
+    (label: 'Sidebar', icon: Icons.view_sidebar_rounded),
+    (label: 'Compact', icon: Icons.compress_rounded),
   ];
-
-  int? get _effectiveSelectedIndex =>
-      _useControlledMode ? _controlledIndex : _uncontrolledIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    _items = <GlassBarItem>[
-      GlassBarItem(
-        iconData: Icons.dashboard_customize_rounded,
-        labelText: 'Workspace',
-        tooltip: 'Workspace tools',
-        semanticLabel: 'Workspace tab',
-        longPressHint: 'Opens workspace quick panel',
-        panelContent: _buildPanelSection(
-          'Workspace',
-          const <String>[
-            'Boards',
-            'Roadmap',
-            'Automation',
-            'Team Status',
-          ],
-        ),
-      ),
-      GlassBarItem(
-        iconData: Icons.bolt_rounded,
-        labelText: 'Shortcuts',
-        tooltip: 'Productivity shortcuts',
-        semanticLabel: 'Shortcuts tab',
-        longPressHint: 'Opens productivity shortcuts panel',
-        panelContent: _buildPanelSection(
-          'Quick Actions',
-          const <String>[
-            'New Task',
-            'Start Focus Timer',
-            'Capture Idea',
-            'Share Update',
-          ],
-        ),
-      ),
-      GlassBarItem(
-        iconData: Icons.insights_rounded,
-        labelText: 'Insights',
-        tooltip: 'Insights and analytics',
-        semanticLabel: 'Insights tab',
-        longPressHint: 'Opens analytics panel',
-        panelContent: _buildPanelSection(
-          'Analytics',
-          const <String>[
-            'Weekly velocity +12%',
-            'On-time delivery 94%',
-            'Blocked tasks: 3',
-            'Team load balanced',
-          ],
-        ),
-      ),
-      GlassBarItem(
-        iconData: Icons.settings_suggest_rounded,
-        labelText: 'Settings',
-        tooltip: 'Project settings',
-        semanticLabel: 'Settings tab',
-        longPressHint: 'Opens settings panel',
-        panelContent: _buildPanelSection(
-          'Configuration',
-          const <String>[
-            'Notifications',
-            'Permissions',
-            'Integrations',
-            'Security',
-          ],
-        ),
-      ),
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
-    final bool isHorizontal = _orientation == Axis.horizontal;
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          const _FeatureBackground(),
+          const _AppBackground(),
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    flex: 5,
-                    child: _buildShowcaseArea(context, isHorizontal),
+            child: Column(
+              children: <Widget>[
+                _buildHeader(),
+                Expanded(
+                  child: IndexedStack(
+                    index: _pageIndex,
+                    children: const <Widget>[
+                      BasicPage(),
+                      SidebarPage(),
+                      CompactPage(),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    flex: 4,
-                    child: _buildControlPanel(context),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -176,185 +74,1002 @@ class _FeatureShowcaseScreenState extends State<FeatureShowcaseScreen> {
     );
   }
 
-  Widget _buildShowcaseArea(BuildContext context, bool isHorizontal) {
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
+      child: Row(
+        children: <Widget>[
+          const Flexible(
+            child: Text(
+              'Glass Bar Showcase',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.3,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          _PagePills(
+            pages: _pages,
+            selectedIndex: _pageIndex,
+            onChanged: (int i) => setState(() => _pageIndex = i),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PagePills extends StatelessWidget {
+  const _PagePills({
+    required this.pages,
+    required this.selectedIndex,
+    required this.onChanged,
+  });
+
+  final List<({String label, IconData icon})> pages;
+  final int selectedIndex;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.07),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List<Widget>.generate(pages.length, (int i) {
+          final bool selected = i == selectedIndex;
+          return GestureDetector(
+            onTap: () => onChanged(i),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+              decoration: BoxDecoration(
+                color: selected
+                    ? Colors.white.withValues(alpha: 0.18)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(
+                    pages[i].icon,
+                    size: 13,
+                    color:
+                        selected ? Colors.white : Colors.white.withValues(alpha: 0.45),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    pages[i].label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight:
+                          selected ? FontWeight.w700 : FontWeight.w400,
+                      color: selected
+                          ? Colors.white
+                          : Colors.white.withValues(alpha: 0.45),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+// ─── Shared items ─────────────────────────────────────────────────────────────
+
+List<GlassBarItem> _buildItems() => <GlassBarItem>[
+      GlassBarItem(
+        iconData: Icons.home_rounded,
+        labelText: 'Home',
+        panelContent: const _PanelContent(
+          title: 'Home',
+          items: <String>['Dashboard', 'Activity feed', 'Pinned items', 'Quick actions'],
+        ),
+      ),
+      GlassBarItem(
+        iconData: Icons.explore_rounded,
+        labelText: 'Explore',
+        panelContent: const _PanelContent(
+          title: 'Explore',
+          items: <String>['Trending', 'Categories', 'Recommended', 'Collections'],
+        ),
+      ),
+      GlassBarItem(
+        iconData: Icons.notifications_rounded,
+        labelText: 'Alerts',
+        panelContent: const _PanelContent(
+          title: 'Alerts',
+          items: <String>['3 unread', 'Mentions', 'Team updates', 'System events'],
+        ),
+      ),
+      GlassBarItem(
+        iconData: Icons.person_rounded,
+        labelText: 'Profile',
+        panelContent: const _PanelContent(
+          title: 'Profile',
+          items: <String>['Account', 'Privacy', 'Themes', 'Sign out'],
+        ),
+      ),
+    ];
+
+// ─── Page 1 · Basic ───────────────────────────────────────────────────────────
+// Full mobile shell — GlassBar at the bottom, horizontal orientation.
+// Features: initialIndex, expandSelectedItem, deselectOnTapWhenSelected,
+//           maxExtent, GlassBarThemeData, itemAnimationCurve,
+//           panelShowDuration / panelHideDuration, panelAnimationCurve.
+
+class BasicPage extends StatefulWidget {
+  const BasicPage({super.key});
+
+  @override
+  State<BasicPage> createState() => _BasicPageState();
+}
+
+class _BasicPageState extends State<BasicPage> {
+  late final List<GlassBarItem> _items;
+  int? _selectedIndex = 0;
+
+  static const List<String> _tabLabels = <String>[
+    'Home',
+    'Explore',
+    'Alerts',
+    'Profile',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _items = _buildItems();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+          child: _FeatureChips(const <String>[
+            'initialIndex: 0',
+            'expandSelectedItem: true',
+            'deselectOnTapWhenSelected: true',
+            'maxExtent: 480',
+            'GlassBarThemeData (cyan)',
+            'itemAnimationCurve: easeInOut',
+            'panelAnimationCurve: easeOutCubic',
+          ]),
+        ),
+        Expanded(
+          child: Center(
+            child: _PhoneMockup(
+              child: Column(
+                children: <Widget>[
+                  Expanded(child: _buildAppContent()),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                    child: GlassBar(
+                      items: _items,
+                      orientation: Axis.horizontal,
+                      selectedIndex: _selectedIndex,
+                      onTabChanged: (int? i) =>
+                          setState(() => _selectedIndex = i),
+                      maxExtent: 480,
+                      expandSelectedItem: true,
+                      deselectOnTapWhenSelected: true,
+                      itemAnimationDuration:
+                          const Duration(milliseconds: 280),
+                      itemAnimationCurve: Curves.easeInOut,
+                      panelShowDuration:
+                          const Duration(milliseconds: 420),
+                      panelHideDuration:
+                          const Duration(milliseconds: 220),
+                      panelAnimationCurve: Curves.easeOutCubic,
+                      theme: const GlassBarThemeData(
+                        backgroundColor: Color(0x1F88D8FF),
+                        selectedItemBackgroundColor: Color(0x33FFFFFF),
+                        selectedItemColor: Colors.white,
+                        unselectedItemColor: Color(0xBFFFFFFF),
+                        blur: 22,
+                        borderRadius: 30,
+                        borderSide: BorderSide(
+                          color: Color(0x5900E5FF),
+                          width: 1.4,
+                        ),
+                        labelStyle: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.2,
+                        ),
+                        panelBackgroundColor: Color(0x1E89C2FF),
+                        panelBlur: 24,
+                        panelBorderRadius: 20,
+                        panelBorderSide:
+                            BorderSide(color: Color(0x4DFFFFFF)),
+                        barPadding: EdgeInsets.all(8),
+                        panelPadding: EdgeInsets.all(16),
+                        boxShadows: <BoxShadow>[
+                          BoxShadow(
+                            color: Color(0x59000000),
+                            blurRadius: 24,
+                            offset: Offset(0, 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAppContent() {
+    final int? sel = _selectedIndex;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            sel != null ? _tabLabels[sel] : 'Tap a tab',
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 1.15,
+              children: List<Widget>.generate(
+                4,
+                (int i) => _ContentCard(index: i),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Page 2 · Sidebar ─────────────────────────────────────────────────────────
+// Tablet / desktop split — GlassBar on the left as a vertical side rail.
+// Features: orientation: vertical, rotateLabelInVertical, iconAfterLabel,
+//           maxExtent (height), verticalPanelMaxWidth, GlassBarThemeData (purple).
+
+class SidebarPage extends StatefulWidget {
+  const SidebarPage({super.key});
+
+  @override
+  State<SidebarPage> createState() => _SidebarPageState();
+}
+
+class _SidebarPageState extends State<SidebarPage> {
+  late final List<GlassBarItem> _items;
+  int? _selectedIndex;
+  bool _rotateLabelInVertical = true;
+  bool _iconAfterLabel = false;
+
+  static const List<String> _tabLabels = <String>[
+    'Home',
+    'Explore',
+    'Alerts',
+    'Profile',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _items = _buildItems();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Glass Bar Feature Showcase',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+          child: Row(
+            children: <Widget>[
+              Flexible(
+                child: _FeatureChips(const <String>[
+                  'orientation: vertical',
+                  'maxExtent: 320',
+                  'verticalPanelMaxWidth: 220',
+                ]),
               ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Tap each tab to inspect panel behavior, layout, animation, and theme.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white70,
+              const SizedBox(width: 10),
+              _ToggleChip(
+                label: 'Rotate label',
+                value: _rotateLabelInVertical,
+                onChanged: (bool v) =>
+                    setState(() => _rotateLabelInVertical = v),
               ),
+              const SizedBox(width: 6),
+              _ToggleChip(
+                label: 'Icon after label',
+                value: _iconAfterLabel,
+                onChanged: (bool v) => setState(() => _iconAfterLabel = v),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 22),
         Expanded(
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(26),
-              color: Colors.white.withValues(alpha: 0.06),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-            ),
-            child: isHorizontal
-                ? Column(
-                    children: <Widget>[
-                      Expanded(child: _buildContentCards()),
-                      const SizedBox(height: 20),
-                      _buildDemoBar(),
-                    ],
-                  )
-                : Row(
-                    children: <Widget>[
-                      _buildDemoBar(),
-                      const SizedBox(width: 20),
-                      Expanded(child: _buildContentCards()),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: _DesktopFrame(
+              sidebar: Padding(
+                padding: const EdgeInsets.all(14),
+                child: GlassBar(
+                  items: _items,
+                  orientation: Axis.vertical,
+                  selectedIndex: _selectedIndex,
+                  onTabChanged: (int? i) =>
+                      setState(() => _selectedIndex = i),
+                  maxExtent: 320,
+                  verticalPanelMaxWidth: 220,
+                  rotateLabelInVertical: _rotateLabelInVertical,
+                  iconAfterLabel: _iconAfterLabel,
+                  expandSelectedItem: true,
+                  deselectOnTapWhenSelected: true,
+                  panelShowDuration: const Duration(milliseconds: 380),
+                  panelHideDuration: const Duration(milliseconds: 200),
+                  panelAnimationCurve: Curves.easeOutCubic,
+                  itemAnimationDuration: const Duration(milliseconds: 260),
+                  itemAnimationCurve: Curves.easeInOut,
+                  theme: const GlassBarThemeData(
+                    backgroundColor: Color(0x1AA855F7),
+                    selectedItemBackgroundColor: Color(0x33E9D5FF),
+                    selectedItemColor: Colors.white,
+                    unselectedItemColor: Color(0xBFFFFFFF),
+                    blur: 20,
+                    borderRadius: 24,
+                    borderSide: BorderSide(
+                      color: Color(0x55A855F7),
+                      width: 1.2,
+                    ),
+                    labelStyle: TextStyle(fontWeight: FontWeight.w600),
+                    panelBackgroundColor: Color(0x1AC4B5FD),
+                    panelBlur: 28,
+                    panelBorderRadius: 20,
+                    panelBorderSide:
+                        BorderSide(color: Color(0x33FFFFFF)),
+                    barPadding: EdgeInsets.all(8),
+                    panelPadding: EdgeInsets.all(16),
+                    boxShadows: <BoxShadow>[
+                      BoxShadow(
+                        color: Color(0x40000000),
+                        blurRadius: 20,
+                        offset: Offset(10, 0),
+                      ),
                     ],
                   ),
+                ),
+              ),
+              content: _buildAppContent(),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildContentCards() {
-    return GridView.count(
-      crossAxisCount: 2,
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.3,
-      children: List<Widget>.generate(6, (int index) {
-        final List<Color> accent = <Color>[
-          Colors.cyanAccent,
-          Colors.purpleAccent,
-          Colors.orangeAccent,
-          Colors.lightGreenAccent,
-        ];
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            gradient: LinearGradient(
-              colors: <Color>[
-                Colors.white.withValues(alpha: 0.15),
-                Colors.white.withValues(alpha: 0.04),
+  Widget _buildAppContent() {
+    final int? sel = _selectedIndex;
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            sel != null ? _tabLabels[sel] : 'Select a section',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 1.2,
+              children: List<Widget>.generate(
+                6,
+                (int i) => _ContentCard(index: i),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Page 3 · Compact ─────────────────────────────────────────────────────────
+// Dense layout — fully controlled selectedIndex + panelAutoHideDuration.
+// Features: selectedIndex (controlled), panelAutoHideDuration,
+//           expandSelectedItem: false, itemAnimationCurve: easeOutCubic,
+//           panelAnimationCurve: fastOutSlowIn, GlassBarThemeData (orange).
+
+class CompactPage extends StatefulWidget {
+  const CompactPage({super.key});
+
+  @override
+  State<CompactPage> createState() => _CompactPageState();
+}
+
+class _CompactPageState extends State<CompactPage> {
+  late final List<GlassBarItem> _items;
+  int? _selectedIndex;
+  bool _autoHideEnabled = true;
+  Duration _autoHideDuration = const Duration(seconds: 2);
+
+  static const List<String> _tabLabels = <String>[
+    'Home',
+    'Explore',
+    'Alerts',
+    'Profile',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _items = _buildItems();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+          child: _FeatureChips(const <String>[
+            'selectedIndex (controlled)',
+            'panelAutoHideDuration',
+            'expandSelectedItem: false',
+            'itemAnimationCurve: easeOutCubic',
+            'panelAnimationCurve: fastOutSlowIn',
+          ]),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: _CompactFrame(
+                    selectedIndex: _selectedIndex,
+                    tabLabels: _tabLabels,
+                    bar: GlassBar(
+                      items: _items,
+                      orientation: Axis.horizontal,
+                      selectedIndex: _selectedIndex,
+                      onTabChanged: (int? i) =>
+                          setState(() => _selectedIndex = i),
+                      maxExtent: 400,
+                      expandSelectedItem: false,
+                      deselectOnTapWhenSelected: true,
+                      panelAutoHideDuration:
+                          _autoHideEnabled ? _autoHideDuration : null,
+                      panelShowDuration:
+                          const Duration(milliseconds: 300),
+                      panelHideDuration:
+                          const Duration(milliseconds: 180),
+                      panelAnimationCurve: Curves.fastOutSlowIn,
+                      itemAnimationDuration:
+                          const Duration(milliseconds: 200),
+                      itemAnimationCurve: Curves.easeOutCubic,
+                      theme: const GlassBarThemeData(
+                        backgroundColor: Color(0x1AF97316),
+                        selectedItemBackgroundColor: Color(0x33FED7AA),
+                        selectedItemColor: Colors.white,
+                        unselectedItemColor: Color(0xBFFFFFFF),
+                        blur: 18,
+                        borderRadius: 20,
+                        borderSide: BorderSide(
+                          color: Color(0x55F97316),
+                          width: 1.2,
+                        ),
+                        labelStyle: TextStyle(fontWeight: FontWeight.w700),
+                        panelBackgroundColor: Color(0x1AFED7AA),
+                        panelBlur: 20,
+                        panelBorderRadius: 16,
+                        panelBorderSide:
+                            BorderSide(color: Color(0x33FFFFFF)),
+                        barPadding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        panelPadding: EdgeInsets.all(14),
+                        boxShadows: <BoxShadow>[
+                          BoxShadow(
+                            color: Color(0x40000000),
+                            blurRadius: 18,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                SizedBox(
+                  width: 210,
+                  child: _CompactControls(
+                    selectedIndex: _selectedIndex,
+                    itemCount: _items.length,
+                    autoHideEnabled: _autoHideEnabled,
+                    autoHideDuration: _autoHideDuration,
+                    onSelectIndex: (int? i) =>
+                        setState(() => _selectedIndex = i),
+                    onAutoHideChanged: (bool v) =>
+                        setState(() => _autoHideEnabled = v),
+                    onDurationChanged: (Duration d) =>
+                        setState(() => _autoHideDuration = d),
+                  ),
+                ),
               ],
             ),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
           ),
-          child: Center(
-            child: Icon(
-              Icons.auto_awesome_rounded,
-              size: 34,
-              color: accent[index % accent.length].withValues(alpha: 0.85),
-            ),
-          ),
-        ).animate().fadeIn(delay: (100 + (index * 30)).ms);
-      }),
-    );
-  }
-
-  Widget _buildDemoBar() {
-    final bool isHorizontal = _orientation == Axis.horizontal;
-    return GlassBar(
-      items: _items,
-      orientation: _orientation,
-      selectedIndex: _useControlledMode ? _controlledIndex : null,
-      initialIndex: _useControlledMode ? null : _uncontrolledIndex,
-      onTabChanged: (int? index) {
-        if (_useControlledMode) {
-          setState(() => _controlledIndex = index);
-        } else {
-          setState(() => _uncontrolledIndex = index);
-        }
-      },
-      rotateLabelInVertical: _rotateLabelInVertical,
-      iconAfterLabel: _iconAfterLabel,
-      maxExtent: _useMaxExtent
-          ? (isHorizontal ? _horizontalMaxExtent : _verticalMaxExtent)
-          : null,
-      theme: _useCustomTheme ? _buildCustomTheme() : null,
-      itemAnimationDuration: _itemAnimationDuration,
-      itemAnimationCurve: _itemAnimationCurve,
-      panelShowDuration: _panelShowDuration,
-      panelHideDuration: _panelHideDuration,
-      panelAutoHideDuration: _useAutoHide ? _panelAutoHideDuration : null,
-      panelAnimationCurve: _panelAnimationCurve,
-      deselectOnTapWhenSelected: _deselectOnTapWhenSelected,
-      expandSelectedItem: _expandSelectedItem,
-      verticalPanelMaxWidth: _verticalPanelMaxWidth,
-    );
-  }
-
-  GlassBarThemeData _buildCustomTheme() {
-    return GlassBarThemeData(
-      backgroundColor: const Color(0x1F88D8FF),
-      selectedItemBackgroundColor: const Color(0x33FFFFFF),
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white.withValues(alpha: 0.75),
-      blur: 22,
-      borderRadius: 30,
-      borderSide: BorderSide(
-        color: Colors.cyanAccent.withValues(alpha: 0.35),
-        width: 1.4,
-      ),
-      labelStyle: const TextStyle(
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.2,
-      ),
-      panelBackgroundColor: const Color(0x1E89C2FF),
-      panelBlur: 24,
-      panelBorderRadius: 24,
-      panelBorderSide: BorderSide(
-        color: Colors.white.withValues(alpha: 0.3),
-      ),
-      boxShadows: <BoxShadow>[
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.35),
-          blurRadius: 24,
-          offset: const Offset(0, 12),
         ),
       ],
-      barPadding: const EdgeInsets.all(10),
-      panelPadding: const EdgeInsets.all(18),
     );
   }
+}
 
-  Widget _buildPanelSection(String title, List<String> points) {
+// ─── Reusable layout widgets ──────────────────────────────────────────────────
+
+class _PhoneMockup extends StatelessWidget {
+  const _PhoneMockup({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 360,
+      height: 660,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(40),
+        color: const Color(0xFF090E1C),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.14),
+          width: 1.5,
+        ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.55),
+            blurRadius: 40,
+            offset: const Offset(0, 20),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(38.5),
+        child: child,
+      ),
+    );
+  }
+}
+
+class _DesktopFrame extends StatelessWidget {
+  const _DesktopFrame({
+    required this.sidebar,
+    required this.content,
+  });
+
+  final Widget sidebar;
+  final Widget content;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: Colors.white.withValues(alpha: 0.04),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.09)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Row(
+          children: <Widget>[
+            IntrinsicWidth(child: sidebar),
+            Container(
+              width: 1,
+              color: Colors.white.withValues(alpha: 0.08),
+            ),
+            Expanded(child: content),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CompactFrame extends StatelessWidget {
+  const _CompactFrame({
+    required this.bar,
+    required this.selectedIndex,
+    required this.tabLabels,
+  });
+
+  final Widget bar;
+  final int? selectedIndex;
+  final List<String> tabLabels;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: Colors.white.withValues(alpha: 0.04),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.09)),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            selectedIndex != null ? tabLabels[selectedIndex!] : 'Tap a tab',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 1.35,
+              children: List<Widget>.generate(
+                4,
+                (int i) => _ContentCard(index: i),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Center(child: bar),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompactControls extends StatelessWidget {
+  const _CompactControls({
+    required this.selectedIndex,
+    required this.itemCount,
+    required this.autoHideEnabled,
+    required this.autoHideDuration,
+    required this.onSelectIndex,
+    required this.onAutoHideChanged,
+    required this.onDurationChanged,
+  });
+
+  final int? selectedIndex;
+  final int itemCount;
+  final bool autoHideEnabled;
+  final Duration autoHideDuration;
+  final ValueChanged<int?> onSelectIndex;
+  final ValueChanged<bool> onAutoHideChanged;
+  final ValueChanged<Duration> onDurationChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        color: Colors.white.withValues(alpha: 0.06),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const Text(
+            'Controls',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'selectedIndex:',
+            style: TextStyle(fontSize: 11, color: Colors.white54),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: <Widget>[
+              ...List<Widget>.generate(
+                itemCount,
+                (int i) => _IndexChip(
+                  label: '$i',
+                  selected: selectedIndex == i,
+                  onTap: () => onSelectIndex(i),
+                ),
+              ),
+              _IndexChip(
+                label: 'null',
+                selected: selectedIndex == null,
+                onTap: () => onSelectIndex(null),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: <Widget>[
+              const Expanded(
+                child: Text(
+                  'Auto hide panel',
+                  style: TextStyle(fontSize: 13),
+                ),
+              ),
+              Switch.adaptive(
+                value: autoHideEnabled,
+                onChanged: onAutoHideChanged,
+              ),
+            ],
+          ),
+          if (autoHideEnabled) ...<Widget>[
+            const Text(
+              'Delay:',
+              style: TextStyle(fontSize: 11, color: Colors.white54),
+            ),
+            Slider(
+              value: autoHideDuration.inMilliseconds
+                  .toDouble()
+                  .clamp(500, 5000),
+              min: 500,
+              max: 5000,
+              divisions: 18,
+              onChanged: (double v) =>
+                  onDurationChanged(Duration(milliseconds: v.round())),
+            ),
+            Text(
+              '${autoHideDuration.inMilliseconds} ms',
+              style: const TextStyle(fontSize: 11, color: Colors.white38),
+            ),
+          ],
+          const SizedBox(height: 10),
+          Text(
+            'Active index: ${selectedIndex?.toString() ?? 'null'}',
+            style: const TextStyle(fontSize: 11, color: Colors.white38),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Small reusable widgets ───────────────────────────────────────────────────
+
+class _FeatureChips extends StatelessWidget {
+  const _FeatureChips(this.features);
+
+  final List<String> features;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 5,
+      runSpacing: 5,
+      children: features
+          .map(
+            (String f) => Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.07),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.14),
+                ),
+              ),
+              child: Text(
+                f,
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  color: Colors.white54,
+                  fontFamily: 'monospace',
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _ToggleChip extends StatelessWidget {
+  const _ToggleChip({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: value
+              ? Colors.purpleAccent.withValues(alpha: 0.2)
+              : Colors.white.withValues(alpha: 0.07),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: value
+                ? Colors.purpleAccent.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.12),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            color: value ? Colors.purpleAccent : Colors.white38,
+            fontWeight:
+                value ? FontWeight.w600 : FontWeight.w400,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _IndexChip extends StatelessWidget {
+  const _IndexChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: selected
+              ? Colors.orange.withValues(alpha: 0.25)
+              : Colors.white.withValues(alpha: 0.07),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: selected
+                ? Colors.orange.withValues(alpha: 0.55)
+                : Colors.white.withValues(alpha: 0.1),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight:
+                selected ? FontWeight.w700 : FontWeight.w400,
+            color: selected ? Colors.orange : Colors.white54,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ContentCard extends StatelessWidget {
+  const _ContentCard({required this.index});
+
+  final int index;
+
+  static const List<Color> _accents = <Color>[
+    Colors.cyanAccent,
+    Colors.purpleAccent,
+    Colors.orangeAccent,
+    Colors.lightGreenAccent,
+    Colors.pinkAccent,
+    Colors.amberAccent,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        gradient: LinearGradient(
+          colors: <Color>[
+            Colors.white.withValues(alpha: 0.11),
+            Colors.white.withValues(alpha: 0.04),
+          ],
+        ),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.09),
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.auto_awesome_rounded,
+          size: 26,
+          color: _accents[index % _accents.length].withValues(alpha: 0.8),
+        ),
+      ),
+    ).animate().fadeIn(delay: (70 + index * 25).ms);
+  }
+}
+
+class _PanelContent extends StatelessWidget {
+  const _PanelContent({required this.title, required this.items});
+
+  final String title;
+  final List<String> items;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        const SizedBox(height: 12),
-        ...points.map(
-          (String point) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
+        const SizedBox(height: 10),
+        ...items.map(
+          (String item) => Padding(
+            padding: const EdgeInsets.only(bottom: 7),
             child: Row(
               children: <Widget>[
                 Container(
-                  width: 7,
-                  height: 7,
+                  width: 5,
+                  height: 5,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: Colors.white.withValues(alpha: 0.55),
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    point,
-                    style: const TextStyle(fontSize: 14.5),
-                  ),
+                const SizedBox(width: 9),
+                Text(
+                  item,
+                  style: const TextStyle(fontSize: 13),
                 ),
               ],
             ),
@@ -363,241 +1078,10 @@ class _FeatureShowcaseScreenState extends State<FeatureShowcaseScreen> {
       ],
     );
   }
-
-  Widget _buildControlPanel(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: Colors.white.withValues(alpha: 0.08),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
-      ),
-      child: ListView(
-        children: <Widget>[
-          Text(
-            'Feature Controls',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 14),
-          _buildSegmentedOrientation(),
-          const SizedBox(height: 12),
-          _switchTile(
-            title: 'Controlled mode (selectedIndex)',
-            value: _useControlledMode,
-            onChanged: (bool v) {
-              setState(() {
-                _useControlledMode = v;
-                _controlledIndex = v ? _controlledIndex : null;
-              });
-            },
-          ),
-          _switchTile(
-            title: 'Rotate label in vertical',
-            value: _rotateLabelInVertical,
-            onChanged: (bool v) => setState(() => _rotateLabelInVertical = v),
-          ),
-          _switchTile(
-            title: 'Icon after label',
-            value: _iconAfterLabel,
-            onChanged: (bool v) => setState(() => _iconAfterLabel = v),
-          ),
-          _switchTile(
-            title: 'Expand selected item',
-            value: _expandSelectedItem,
-            onChanged: (bool v) => setState(() => _expandSelectedItem = v),
-          ),
-          _switchTile(
-            title: 'Deselect on same tab tap',
-            value: _deselectOnTapWhenSelected,
-            onChanged: (bool v) =>
-                setState(() => _deselectOnTapWhenSelected = v),
-          ),
-          _switchTile(
-            title: 'Use maxExtent',
-            value: _useMaxExtent,
-            onChanged: (bool v) => setState(() => _useMaxExtent = v),
-          ),
-          _switchTile(
-            title: 'Use custom theme',
-            value: _useCustomTheme,
-            onChanged: (bool v) => setState(() => _useCustomTheme = v),
-          ),
-          _switchTile(
-            title: 'Panel auto hide',
-            value: _useAutoHide,
-            onChanged: (bool v) => setState(() => _useAutoHide = v),
-          ),
-          const SizedBox(height: 6),
-          _sliderTile(
-            title: 'Vertical panel max width',
-            value: _verticalPanelMaxWidth,
-            min: _kPanelWidthMin,
-            max: _kPanelWidthMax,
-            onChanged: (double v) => setState(() => _verticalPanelMaxWidth = v),
-          ),
-          _sliderTile(
-            title: 'Horizontal max extent',
-            value: _horizontalMaxExtent,
-            min: _kHorizontalExtentMin,
-            max: _kHorizontalExtentMax,
-            onChanged: (double v) => setState(() => _horizontalMaxExtent = v),
-          ),
-          _sliderTile(
-            title: 'Vertical max extent',
-            value: _verticalMaxExtent,
-            min: _kVerticalExtentMin,
-            max: _kVerticalExtentMax,
-            onChanged: (double v) => setState(() => _verticalMaxExtent = v),
-          ),
-          _sliderTile(
-            title: 'Item animation (ms)',
-            value: _itemAnimationDuration.inMilliseconds.toDouble(),
-            min: 100,
-            max: 700,
-            onChanged: (double v) => setState(
-              () => _itemAnimationDuration = Duration(milliseconds: v.round()),
-            ),
-          ),
-          _sliderTile(
-            title: 'Panel show duration (ms)',
-            value: _panelShowDuration.inMilliseconds.toDouble(),
-            min: 150,
-            max: 900,
-            onChanged: (double v) => setState(
-                () => _panelShowDuration = Duration(milliseconds: v.round())),
-          ),
-          _sliderTile(
-            title: 'Panel hide duration (ms)',
-            value: _panelHideDuration.inMilliseconds.toDouble(),
-            min: 100,
-            max: 700,
-            onChanged: (double v) => setState(
-                () => _panelHideDuration = Duration(milliseconds: v.round())),
-          ),
-          _sliderTile(
-            title: 'Panel auto hide (ms)',
-            value: _panelAutoHideDuration.inMilliseconds.toDouble(),
-            min: 800,
-            max: 6000,
-            onChanged: (double v) => setState(
-              () => _panelAutoHideDuration = Duration(milliseconds: v.round()),
-            ),
-          ),
-          const SizedBox(height: 10),
-          _curveSelector(
-            title: 'Item animation curve',
-            value: _itemAnimationCurve,
-            onChanged: (Curve curve) =>
-                setState(() => _itemAnimationCurve = curve),
-          ),
-          const SizedBox(height: 8),
-          _curveSelector(
-            title: 'Panel animation curve',
-            value: _panelAnimationCurve,
-            onChanged: (Curve curve) =>
-                setState(() => _panelAnimationCurve = curve),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Current selected index: ${_effectiveSelectedIndex?.toString() ?? 'null'}',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSegmentedOrientation() {
-    return SegmentedButton<Axis>(
-      segments: const <ButtonSegment<Axis>>[
-        ButtonSegment<Axis>(
-          value: Axis.horizontal,
-          icon: Icon(Icons.swap_horiz_rounded),
-          label: Text('Horizontal'),
-        ),
-        ButtonSegment<Axis>(
-          value: Axis.vertical,
-          icon: Icon(Icons.swap_vert_rounded),
-          label: Text('Vertical'),
-        ),
-      ],
-      selected: <Axis>{_orientation},
-      onSelectionChanged: (Set<Axis> selection) {
-        setState(() {
-          _orientation = selection.first;
-        });
-      },
-    );
-  }
-
-  Widget _switchTile({
-    required String title,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return SwitchListTile.adaptive(
-      dense: true,
-      value: value,
-      contentPadding: EdgeInsets.zero,
-      title: Text(title),
-      onChanged: onChanged,
-    );
-  }
-
-  Widget _sliderTile({
-    required String title,
-    required double value,
-    required double min,
-    required double max,
-    required ValueChanged<double> onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text('$title: ${value.round()}'),
-        Slider(
-          value: value.clamp(min, max),
-          min: min,
-          max: max,
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
-
-  Widget _curveSelector({
-    required String title,
-    required Curve value,
-    required ValueChanged<Curve> onChanged,
-  }) {
-    return Row(
-      children: <Widget>[
-        Expanded(child: Text(title)),
-        DropdownButton<Curve>(
-          value: value,
-          items: _curvePresets
-              .map(
-                (_CurvePreset preset) => DropdownMenuItem<Curve>(
-                  value: preset.curve,
-                  child: Text(preset.label),
-                ),
-              )
-              .toList(),
-          onChanged: (Curve? next) {
-            if (next != null) {
-              onChanged(next);
-            }
-          },
-        ),
-      ],
-    );
-  }
 }
 
-class _FeatureBackground extends StatelessWidget {
-  const _FeatureBackground();
+class _AppBackground extends StatelessWidget {
+  const _AppBackground();
 
   @override
   Widget build(BuildContext context) {
@@ -609,17 +1093,10 @@ class _FeatureBackground extends StatelessWidget {
           colors: <Color>[
             Color(0xFF0F1729),
             Color(0xFF0A2540),
-            Color(0xFF062A26)
+            Color(0xFF062A26),
           ],
         ),
       ),
     );
   }
-}
-
-class _CurvePreset {
-  const _CurvePreset(this.label, this.curve);
-
-  final String label;
-  final Curve curve;
 }
