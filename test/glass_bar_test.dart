@@ -46,7 +46,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Home Panel'), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.home));
+    expect(find.byIcon(Icons.home_filled), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.home_filled));
     await tester.pumpAndSettle();
     expect(find.text('Home Panel'), findsNothing);
   });
