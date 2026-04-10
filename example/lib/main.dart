@@ -465,16 +465,16 @@ class _FeatureShowcaseScreenState extends State<FeatureShowcaseScreen> {
             value: _panelShowDuration.inMilliseconds.toDouble(),
             min: 150,
             max: 900,
-            onChanged: (double v) =>
-                setState(() => _panelShowDuration = Duration(milliseconds: v.round())),
+            onChanged: (double v) => setState(
+                () => _panelShowDuration = Duration(milliseconds: v.round())),
           ),
           _sliderTile(
             title: 'Panel hide duration (ms)',
             value: _panelHideDuration.inMilliseconds.toDouble(),
             min: 100,
             max: 700,
-            onChanged: (double v) =>
-                setState(() => _panelHideDuration = Duration(milliseconds: v.round())),
+            onChanged: (double v) => setState(
+                () => _panelHideDuration = Duration(milliseconds: v.round())),
           ),
           _sliderTile(
             title: 'Panel auto hide (ms)',
@@ -489,13 +489,15 @@ class _FeatureShowcaseScreenState extends State<FeatureShowcaseScreen> {
           _curveSelector(
             title: 'Item animation curve',
             value: _itemAnimationCurve,
-            onChanged: (Curve curve) => setState(() => _itemAnimationCurve = curve),
+            onChanged: (Curve curve) =>
+                setState(() => _itemAnimationCurve = curve),
           ),
           const SizedBox(height: 8),
           _curveSelector(
             title: 'Panel animation curve',
             value: _panelAnimationCurve,
-            onChanged: (Curve curve) => setState(() => _panelAnimationCurve = curve),
+            onChanged: (Curve curve) =>
+                setState(() => _panelAnimationCurve = curve),
           ),
           const SizedBox(height: 10),
           Text(
@@ -604,7 +606,11 @@ class _FeatureBackground extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: <Color>[Color(0xFF0F1729), Color(0xFF0A2540), Color(0xFF062A26)],
+          colors: <Color>[
+            Color(0xFF0F1729),
+            Color(0xFF0A2540),
+            Color(0xFF062A26)
+          ],
         ),
       ),
     );
