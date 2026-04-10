@@ -7,8 +7,10 @@ void main() {
     return const <GlassBarItem>[
       GlassBarItem(
         iconData: Icons.home,
+        activeIconData: Icons.home_filled,
         labelText: 'Home',
         panelContent: Text('Home Panel'),
+        badgeText: '3',
       ),
       GlassBarItem(
         iconData: Icons.settings,
@@ -90,5 +92,72 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.text('Home Panel'), findsNothing);
+  });
+
+  testWidgets('supports active icon and badge', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: GlassBar(
+            items: const <GlassBarItem>[
+              GlassBarItem(
+                iconData: Icons.home_outlined,
+                activeIcon: Icon(Icons.home),
+                labelText: 'Home',
+                badgeText: '3',
+                panelContent: Text('Home Panel'),
+              ),
+              GlassBarItem(
+                iconData: Icons.settings_outlined,
+                activeIcon: Icon(Icons.settings),
+                labelText: 'Settings',
+                panelContent: Text('Settings Panel'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.home_outlined), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.home_outlined));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.home), findsOneWidget);
+    expect(find.text('3'), findsOneWidget);
+  });
+
+  testWidgets('letIndexChange can block selection changes', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: GlassBar(
+            items: buildItems(),
+            letIndexChange: (current, next) => next != 1,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byIcon(Icons.settings));
+    await tester.pumpAndSettle();
+    expect(find.text('Settings Panel'), findsNothing);
+  });
+
+  testWidgets('showLabelMode.always shows label even when not selected',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: GlassBar(
+            items: buildItems(),
+            showLabelMode: ShowLabelMode.always,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Settings'), findsOneWidget);
   });
 }

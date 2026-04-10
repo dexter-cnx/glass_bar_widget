@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 class GlassBarThemeData {
   const GlassBarThemeData({
     this.backgroundColor = const Color(0x1F9E9E9E),
+    this.backgroundGradient,
     this.selectedItemBackgroundColor = const Color(0x33FFFFFF),
+    this.selectedItemGradient,
     this.selectedItemColor = Colors.white,
     this.unselectedItemColor = Colors.white70,
     this.blur = 20,
@@ -30,7 +32,9 @@ class GlassBarThemeData {
   });
 
   final Color backgroundColor;
+  final Gradient? backgroundGradient;
   final Color selectedItemBackgroundColor;
+  final Gradient? selectedItemGradient;
   final Color selectedItemColor;
   final Color unselectedItemColor;
   final double blur;
@@ -47,7 +51,9 @@ class GlassBarThemeData {
 
   GlassBarThemeData copyWith({
     Color? backgroundColor,
+    Gradient? backgroundGradient,
     Color? selectedItemBackgroundColor,
+    Gradient? selectedItemGradient,
     Color? selectedItemColor,
     Color? unselectedItemColor,
     double? blur,
@@ -64,8 +70,10 @@ class GlassBarThemeData {
   }) {
     return GlassBarThemeData(
       backgroundColor: backgroundColor ?? this.backgroundColor,
+      backgroundGradient: backgroundGradient ?? this.backgroundGradient,
       selectedItemBackgroundColor:
           selectedItemBackgroundColor ?? this.selectedItemBackgroundColor,
+      selectedItemGradient: selectedItemGradient ?? this.selectedItemGradient,
       selectedItemColor: selectedItemColor ?? this.selectedItemColor,
       unselectedItemColor: unselectedItemColor ?? this.unselectedItemColor,
       blur: blur ?? this.blur,

@@ -41,8 +41,10 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
     _navItems = <GlassBarItem>[
       GlassBarItem(
         iconData: Icons.apps_rounded,
+        activeIconData: Icons.apps,
         labelText: 'Apps',
         tooltip: 'Apps',
+        badgeText: '12',
         panelContent: _buildPanelContent(
           'Popular Apps',
           <String>['Figma', 'Notion', 'Spotify', 'Linear'],
@@ -50,6 +52,7 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
       ),
       GlassBarItem(
         iconData: Icons.widgets_rounded,
+        activeIconData: Icons.widgets,
         labelText: 'Components',
         tooltip: 'Components',
         panelContent: _buildPanelContent(
@@ -64,6 +67,7 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
       ),
       GlassBarItem(
         iconData: Icons.note_alt_rounded,
+        activeIconData: Icons.note_alt,
         labelText: 'Notes',
         tooltip: 'Notes',
         panelContent: _buildPanelContent(
@@ -140,10 +144,12 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
                 orientation: Axis.vertical,
                 selectedIndex: _vIndex,
                 items: _navItems,
+                showLabelMode: ShowLabelMode.always,
                 onTabChanged: (index) {
                   setState(() => _vIndex = index);
                 },
                 maxExtent: 500,
+                useSafeArea: false,
               ),
             ),
           ),
@@ -157,10 +163,15 @@ class _DynamicPanelScreenState extends State<DynamicPanelScreen> {
                 orientation: Axis.horizontal,
                 selectedIndex: _hIndex,
                 items: _navItems,
+                selectedIconScale: 1.3,
+                enableHapticFeedback: true,
+                enableDragToChangeTab: true,
                 onTabChanged: (index) {
                   setState(() => _hIndex = index);
                 },
                 iconAfterLabel: true,
+                rippleColor: Colors.white24,
+                elevation: 2,
               ),
             ),
           ),

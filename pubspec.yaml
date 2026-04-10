@@ -5,11 +5,10 @@ homepage: https://github.com/dexter-cnx/glass_bar_widget
 repository: https://github.com/dexter-cnx/glass_bar_widget
 issue_tracker: https://github.com/dexter-cnx/glass_bar_widget/issues
 topics:
+  - glass
   - flutter
-  - navigation
+  - navigation-bar
   - glassmorphism
-  - sidebar
-  - bottom-navigation
 
 screenshots:
   - description: GlassBar demo animation showing the navigation bar and panel interactions.
@@ -24,6 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_svg: ^2.2.0
 
 dev_dependencies:
   flutter_test:
