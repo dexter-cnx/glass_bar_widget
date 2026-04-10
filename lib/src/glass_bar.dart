@@ -136,6 +136,7 @@ class _GlassBarState extends State<GlassBar>
       backgroundColor: backgroundColor,
     );
   }
+
   Duration get _itemDuration =>
       widget.animationDuration ?? widget.itemAnimationDuration;
   Curve get _itemCurve => widget.animationCurve ?? widget.itemAnimationCurve;
@@ -243,7 +244,8 @@ class _GlassBarState extends State<GlassBar>
 
   void _setSelectedIndex(int? index) {
     final current = _effectiveIndex;
-    if (widget.letIndexChange != null && !widget.letIndexChange!(current, index)) {
+    if (widget.letIndexChange != null &&
+        !widget.letIndexChange!(current, index)) {
       return;
     }
 
@@ -298,8 +300,9 @@ class _GlassBarState extends State<GlassBar>
       animation: _panelAnimation,
       builder: (context, _) {
         final displayIndex = _effectiveIndex ?? _lastValidIndex;
-        final content =
-            displayIndex == null ? null : widget.items[displayIndex].panelContent;
+        final content = displayIndex == null
+            ? null
+            : widget.items[displayIndex].panelContent;
         if (content == null || _panelAnimation.value == 0) {
           return const SizedBox.shrink();
         }
@@ -361,14 +364,17 @@ class _GlassBarState extends State<GlassBar>
         child: Container(
           padding: _theme.barPadding,
           decoration: BoxDecoration(
-            color: _theme.backgroundGradient == null ? _theme.backgroundColor : null,
+            color: _theme.backgroundGradient == null
+                ? _theme.backgroundColor
+                : null,
             gradient: _theme.backgroundGradient,
             borderRadius: BorderRadius.circular(_theme.borderRadius),
             border: Border.fromBorderSide(_theme.borderSide),
             boxShadow: _isHorizontal
                 ? _theme.boxShadows
                 : _theme.boxShadows
-                    .map((shadow) => shadow.copyWith(offset: const Offset(10, 0)))
+                    .map((shadow) =>
+                        shadow.copyWith(offset: const Offset(10, 0)))
                     .toList(),
           ),
           child: Flex(
