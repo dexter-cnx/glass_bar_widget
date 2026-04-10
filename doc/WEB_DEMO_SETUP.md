@@ -18,3 +18,21 @@ The current workflow uses:
 ```
 
 If your repository name is different, update `.github/workflows/web-demo.yml`.
+
+## Browser screenshot capture
+
+After serving the built web demo locally, you can capture screenshots with:
+
+```bash
+make media-web-browser
+```
+
+The Playwright script (`tool/media/capture_web_demo.mjs`) outputs:
+- `doc/media/glass_bar_demo.png`
+- interaction frames under `doc/media/frames/`
+
+Useful environment variables:
+- `DEMO_URL` (default: `http://127.0.0.1:8080`)
+- `MANUAL` (`true`/`false`)
+- `HEADLESS` (`true`/`false`)
+- `MAX_FRAMES` (default: `30`)
