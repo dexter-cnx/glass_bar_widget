@@ -17,6 +17,8 @@ GlassBar is a Flutter navigation bar package with glassmorphism styling, horizon
 - Optional `panelAutoHideDuration`
 - Controlled and uncontrolled selection modes
 - Flexible theming via `GlassBarThemeData`
+- Active/inactive icon support, badges, and label style overrides
+- Optional haptic feedback, safe area toggle, and configurable selected icon scale
 - Accessibility support with tooltips and semantics
 - GitHub Actions CI and a GitHub Pages demo
 
@@ -85,14 +87,52 @@ GlassBar(
 | Property | Type | Default | Notes |
 |---|---|---:|---|
 | `items` | `List<GlassBarItem>` | required | Navigation items |
+| `letIndexChange` | `bool Function(int?, int?)?` | `null` | Intercept/deny tab changes |
 | `selectedIndex` | `int?` | `null` | Controlled mode when provided |
 | `onTabChanged` | `ValueChanged<int?>?` | `null` | Callback for selection changes |
 | `orientation` | `Axis` | `Axis.horizontal` | Horizontal or vertical |
+| `showLabelMode` | `ShowLabelMode` | `onSelected` | Label visibility mode |
+| `selectedIconScale` | `double` | `1.2` | Active icon scale |
+| `enableHapticFeedback` | `bool` | `true` | Light haptic on tap |
+| `enableDragToChangeTab` | `bool` | `false` | Swipe to switch tabs (horizontal mode) |
+| `useSafeArea` | `bool` | `true` | Wrap bar in SafeArea |
+| `enableBlur` | `bool` | `true` | Disable blur for low-end devices |
+| `elevation` | `double` | `0` | Material elevation/shadow |
+| `rippleColor` | `Color?` | `null` | Custom tap ripple color |
+| `rippleRadius` | `double?` | `null` | Custom tap ripple radius |
+| `indicatorBuilder` | `GlassBarIndicatorBuilder?` | `null` | Provide custom selected indicator wrapper |
 | `maxExtent` | `double?` | `null` | Constrains bar width or height |
 | `panelShowDuration` | `Duration` | `450ms` | Show animation |
 | `panelHideDuration` | `Duration` | `250ms` | Hide animation |
 | `panelAutoHideDuration` | `Duration?` | `null` | Auto-hide delay |
+| `rotateLabelInVertical` | `bool` | `true` | Rotate selected label in vertical mode |
+| `iconAfterLabel` | `bool` | `false` | Place icon after label when selected |
+| `itemAnimationDuration` | `Duration` | `300ms` | Item animation duration |
+| `itemAnimationCurve` | `Curve` | `easeInOut` | Item animation curve |
+| `initialIndex` | `int?` | `null` | Initial selected index in uncontrolled mode |
+| `deselectOnTapWhenSelected` | `bool` | `true` | Tap selected item again to deselect |
+| `expandSelectedItem` | `bool` | `true` | Expands selected item when `maxExtent` is used |
+| `verticalPanelMaxWidth` | `double?` | `240` | Max panel width in vertical orientation |
 | `theme` | `GlassBarThemeData?` | default theme | Styling |
+
+### GlassBarItem API
+
+`GlassBarItem` supports:
+
+- `icon`, `iconData`, `svgAssetPath`
+- `activeIcon`, `activeIconData`, `activeSvgAssetPath`
+- `badgeText`, `badgeColor`
+- `labelStyle`, `activeLabelStyle`
+- `tooltip`, `semanticLabel`, `longPressHint`
+
+> Minimum recommended item count is **2**.
+
+## Troubleshooting
+
+- **Blur not visible**: Use `Scaffold(extendBody: true)` and ensure there is content behind the bar.
+- **Low performance on some devices**: Set `enableBlur: false` or reduce blur values in theme.
+- **Android Impeller icon color issues**: test with/without blur and consider fallback icon rendering strategy for affected devices.
+- **Hot restart quirks while tuning animations**: do a full restart when changing theme/blur-heavy visual settings.
 
 ## Web demo
 
@@ -113,3 +153,7 @@ See [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md).
 ## Branch protection
 
 See [doc/BRANCH_PROTECTION_CHECKLIST.md](doc/BRANCH_PROTECTION_CHECKLIST.md).
+
+## Improvement plan
+
+See [doc/PHASED_IMPROVEMENT_PLAN.md](doc/PHASED_IMPROVEMENT_PLAN.md).
