@@ -28,6 +28,8 @@ class GlassBar extends StatefulWidget {
     this.deselectOnTapWhenSelected = true,
     this.expandSelectedItem = true,
     this.verticalPanelMaxWidth = 240,
+    this.horizontalPanelOverlayBottomInset = 60,
+    this.verticalPanelOverlayStartInset = 72,
   })  : assert(items.length > 0, 'items must not be empty'),
         assert(
           selectedIndex == null ||
@@ -58,6 +60,8 @@ class GlassBar extends StatefulWidget {
   final bool deselectOnTapWhenSelected;
   final bool expandSelectedItem;
   final double? verticalPanelMaxWidth;
+  final double horizontalPanelOverlayBottomInset;
+  final double verticalPanelOverlayStartInset;
 
   bool get isControlled => onTabChanged != null;
 
@@ -67,8 +71,6 @@ class GlassBar extends StatefulWidget {
 
 class _GlassBarState extends State<GlassBar>
     with SingleTickerProviderStateMixin {
-  static const double _horizontalPanelOverlayBottomInset = 60;
-
   late final AnimationController _panelController;
   late Animation<double> _panelAnimation;
   Timer? _autoHideTimer;
@@ -155,8 +157,13 @@ class _GlassBarState extends State<GlassBar>
     }
     _autoHideTimer?.cancel();
     _autoHideTimer = Timer(autoHide, () {
-      _setSelectedIndex(null);
+      _autoHidePanel();
     });
+  }
+
+  void _autoHidePanel() {
+    _autoHideTimer?.cancel();
+    _panelController.reverse();
   }
 
   void _handleTap(int index) {
@@ -189,21 +196,23 @@ class _GlassBarState extends State<GlassBar>
           Positioned(
             left: 0,
             right: 0,
-            bottom: _horizontalPanelOverlayBottomInset,
+            bottom: widget.horizontalPanelOverlayBottomInset,
             child: Center(child: _buildPanel()),
           ),
         ],
       );
     }
 
-    return Flex(
-      direction: _isHorizontal ? Axis.vertical : Axis.horizontal,
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment:
-          _isHorizontal ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-      children: _isHorizontal
-          ? <Widget>[_buildPanel(), _buildBar()]
-          : <Widget>[_buildBar(), _buildPanel()],
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.centerLeft,
+      children: <Widget>[
+        _buildBar(),
+        Positioned(
+          left: widget.verticalPanelOverlayStartInset,
+          child: _buildPanel(),
+        ),
+      ],
     );
   }
 
@@ -226,7 +235,7 @@ class _GlassBarState extends State<GlassBar>
           child: Padding(
             padding: EdgeInsets.only(
               bottom: _isHorizontal ? 16 : 0,
-              left: _isHorizontal ? 0 : 16,
+              left: _isHorizontal ? 0 : 12,
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(_theme.panelBorderRadius),
@@ -390,8 +399,12 @@ class _GlassBarState extends State<GlassBar>
           ? RotatedBox(quarterTurns: 3, child: item.effectiveLabel)
           : item.effectiveLabel,
     );
-    final labelWidget =
-        useExpanded ? Expanded(child: labelChild) : Flexible(child: labelChild);
+    final labelWidget = useExpanded
+        ? Flexible(
+            fit: FlexFit.loose,
+            child: labelChild,
+          )
+        : Flexible(child: labelChild);
 
     final spacing =
         SizedBox(width: _isHorizontal ? 8 : 0, height: _isHorizontal ? 0 : 8);

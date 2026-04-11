@@ -435,6 +435,7 @@ class _SidebarPageState extends State<SidebarPage> {
                   deselectOnTapWhenSelected: true,
                   panelShowDuration: const Duration(milliseconds: 380),
                   panelHideDuration: const Duration(milliseconds: 200),
+                  panelAutoHideDuration: const Duration(milliseconds: 1100),
                   panelAnimationCurve: Curves.easeOutCubic,
                   itemAnimationDuration: const Duration(milliseconds: 260),
                   itemAnimationCurve: Curves.easeInOut,
