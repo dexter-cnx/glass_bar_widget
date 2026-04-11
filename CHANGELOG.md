@@ -1,10 +1,12 @@
 # Changelog
 
 ## 1.1.0
-- Improved horizontal and vertical panel layout behavior.
-- Added configurable panel overlay spacing for tighter positioning.
-- Added optional auto-hide behavior that closes panels without forcing unselect.
-- Updated the example app and media capture workflows.
+- Added richer item API: `activeIcon`, `activeIconData`, svg asset icon support, badges, and per-item label styles.
+- Added new interaction and behavior options: `letIndexChange`, `showLabelMode`, `selectedIconScale`, `enableHapticFeedback`, `enableDragToChangeTab`, `useSafeArea`, `enableBlur`, custom ripple, and `elevation`.
+- Added optional custom indicator wrapper via `indicatorBuilder`.
+- Added performance-minded blur filter caching and blur toggle support.
+- Added theme gradient support for bar and selected item backgrounds.
+- Updated docs with detailed API table and troubleshooting guidance.
 
 ## 1.0.0
 - First production-ready package release.
