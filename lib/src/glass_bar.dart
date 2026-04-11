@@ -67,20 +67,23 @@ class GlassBar extends StatefulWidget {
 
 class _GlassBarState extends State<GlassBar>
     with SingleTickerProviderStateMixin {
+  static const double _horizontalPanelOverlayBottomInset = 60;
+
   late final AnimationController _panelController;
   late Animation<double> _panelAnimation;
   Timer? _autoHideTimer;
   int? _internalIndex;
   int? _lastValidIndex;
 
-  int? get _effectiveIndex => widget.selectedIndex ?? _internalIndex;
+  int? get _effectiveIndex =>
+      widget.isControlled ? widget.selectedIndex : _internalIndex;
   bool get _isHorizontal => widget.orientation == Axis.horizontal;
   GlassBarThemeData get _theme => widget.theme ?? const GlassBarThemeData();
 
   @override
   void initState() {
     super.initState();
-    _internalIndex = widget.selectedIndex == null ? widget.initialIndex : null;
+    _internalIndex = widget.isControlled ? null : widget.initialIndex;
     _lastValidIndex = _effectiveIndex;
 
     _panelController = AnimationController(
@@ -120,7 +123,8 @@ class _GlassBarState extends State<GlassBar>
     }
 
     final index = _effectiveIndex;
-    final oldIndex = oldWidget.selectedIndex ?? _internalIndex;
+    final oldIndex =
+        oldWidget.isControlled ? oldWidget.selectedIndex : _internalIndex;
     if (index != oldIndex) {
       _syncPanelWithIndex(index);
     }
@@ -176,6 +180,22 @@ class _GlassBarState extends State<GlassBar>
 
   @override
   Widget build(BuildContext context) {
+    if (_isHorizontal) {
+      return Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          _buildBar(),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: _horizontalPanelOverlayBottomInset,
+            child: Center(child: _buildPanel()),
+          ),
+        ],
+      );
+    }
+
     return Flex(
       direction: _isHorizontal ? Axis.vertical : Axis.horizontal,
       mainAxisSize: MainAxisSize.min,
@@ -203,60 +223,32 @@ class _GlassBarState extends State<GlassBar>
           offset: _isHorizontal
               ? Offset(0, 20 * (1 - _panelAnimation.value))
               : Offset(20 * (1 - _panelAnimation.value), 0),
-          child: Opacity(
-            opacity: _panelAnimation.value,
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: _isHorizontal ? 16 : 0,
-                left: _isHorizontal ? 0 : 16,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(_theme.panelBorderRadius),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: _theme.panelBlur,
-                    sigmaY: _theme.panelBlur,
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: _isHorizontal ? 16 : 0,
+              left: _isHorizontal ? 0 : 16,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(_theme.panelBorderRadius),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: _theme.panelBlur,
+                  sigmaY: _theme.panelBlur,
+                ),
+                child: Container(
+                  constraints: _isHorizontal
+                      ? null
+                      : BoxConstraints(
+                          maxWidth: widget.verticalPanelMaxWidth ?? 240),
+                  decoration: BoxDecoration(
+                    color: _theme.panelBackgroundColor,
+                    borderRadius:
+                        BorderRadius.circular(_theme.panelBorderRadius),
+                    border: Border.fromBorderSide(_theme.panelBorderSide),
                   ),
-                  child: Container(
-                    constraints: _isHorizontal
-                        ? null
-                        : BoxConstraints(
-                            maxWidth: widget.verticalPanelMaxWidth ?? 240),
-                    decoration: BoxDecoration(
-                      color: _theme.panelBackgroundColor,
-                      borderRadius:
-                          BorderRadius.circular(_theme.panelBorderRadius),
-                      border: Border.fromBorderSide(_theme.panelBorderSide),
-                    ),
-                    child: Stack(
-                      children: <Widget>[
-                        Positioned.fill(
-                          child: IgnorePointer(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  _theme.panelBorderRadius,
-                                ),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: <Color>[
-                                    Colors.white.withValues(alpha: 0.18),
-                                    Colors.white.withValues(alpha: 0.06),
-                                    Colors.white.withValues(alpha: 0.015),
-                                  ],
-                                  stops: const <double>[0, 0.42, 1],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: _theme.panelPadding,
-                          child: content,
-                        ),
-                      ],
-                    ),
+                  child: Padding(
+                    padding: _theme.panelPadding,
+                    child: content,
                   ),
                 ),
               ),
@@ -398,9 +390,8 @@ class _GlassBarState extends State<GlassBar>
           ? RotatedBox(quarterTurns: 3, child: item.effectiveLabel)
           : item.effectiveLabel,
     );
-    final labelWidget = useExpanded
-        ? Expanded(child: labelChild)
-        : Flexible(child: labelChild);
+    final labelWidget =
+        useExpanded ? Expanded(child: labelChild) : Flexible(child: labelChild);
 
     final spacing =
         SizedBox(width: _isHorizontal ? 8 : 0, height: _isHorizontal ? 0 : 8);

@@ -49,52 +49,44 @@ class _ShowcaseShellState extends State<ShowcaseShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          const _AppBackground(),
-          SafeArea(
-            child: Column(
-              children: <Widget>[
-                _buildHeader(),
-                Expanded(
-                  child: IndexedStack(
-                    index: _pageIndex,
-                    children: const <Widget>[
-                      BasicPage(),
-                      SidebarPage(),
-                      CompactPage(),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
-      child: Row(
-        children: <Widget>[
-          const Flexible(
-            child: Text(
-              'Glass Bar Showcase',
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.3,
+      appBar: AppBar(
+        title: const Text('Glass Bar Showcase'),
+        titleSpacing: 20,
+        backgroundColor: const Color(0xFF070A12),
+        foregroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(64),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: _PagePills(
+                pages: _pages,
+                selectedIndex: _pageIndex,
+                onChanged: (int i) => setState(() => _pageIndex = i),
               ),
             ),
           ),
-          const SizedBox(width: 10),
-          _PagePills(
-            pages: _pages,
-            selectedIndex: _pageIndex,
-            onChanged: (int i) => setState(() => _pageIndex = i),
+        ),
+      ),
+      body: Stack(
+        children: <Widget>[
+          const _AppBackground(),
+          Positioned.fill(
+            child: SafeArea(
+              top: false,
+              child: IndexedStack(
+                index: _pageIndex,
+                children: const <Widget>[
+                  BasicPage(),
+                  SidebarPage(),
+                  CompactPage(),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -130,8 +122,7 @@ class _PagePills extends StatelessWidget {
             onTap: () => onChanged(i),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
               decoration: BoxDecoration(
                 color: selected
                     ? Colors.white.withValues(alpha: 0.18)
@@ -144,16 +135,16 @@ class _PagePills extends StatelessWidget {
                   Icon(
                     pages[i].icon,
                     size: 13,
-                    color:
-                        selected ? Colors.white : Colors.white.withValues(alpha: 0.45),
+                    color: selected
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: 0.45),
                   ),
                   const SizedBox(width: 5),
                   Text(
                     pages[i].label,
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight:
-                          selected ? FontWeight.w700 : FontWeight.w400,
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
                       color: selected
                           ? Colors.white
                           : Colors.white.withValues(alpha: 0.45),
@@ -177,7 +168,12 @@ List<GlassBarItem> _buildItems() => <GlassBarItem>[
         labelText: 'Home',
         panelContent: const _PanelContent(
           title: 'Home',
-          items: <String>['Dashboard', 'Activity feed', 'Pinned items', 'Quick actions'],
+          items: <String>[
+            'Dashboard',
+            'Activity feed',
+            'Pinned items',
+            'Quick actions'
+          ],
         ),
       ),
       GlassBarItem(
@@ -185,7 +181,12 @@ List<GlassBarItem> _buildItems() => <GlassBarItem>[
         labelText: 'Explore',
         panelContent: const _PanelContent(
           title: 'Explore',
-          items: <String>['Trending', 'Categories', 'Recommended', 'Collections'],
+          items: <String>[
+            'Trending',
+            'Categories',
+            'Recommended',
+            'Collections'
+          ],
         ),
       ),
       GlassBarItem(
@@ -193,7 +194,12 @@ List<GlassBarItem> _buildItems() => <GlassBarItem>[
         labelText: 'Alerts',
         panelContent: const _PanelContent(
           title: 'Alerts',
-          items: <String>['3 unread', 'Mentions', 'Team updates', 'System events'],
+          items: <String>[
+            '3 unread',
+            'Mentions',
+            'Team updates',
+            'System events'
+          ],
         ),
       ),
       GlassBarItem(
@@ -269,13 +275,10 @@ class _BasicPageState extends State<BasicPage> {
                       maxExtent: 480,
                       expandSelectedItem: true,
                       deselectOnTapWhenSelected: true,
-                      itemAnimationDuration:
-                          const Duration(milliseconds: 280),
+                      itemAnimationDuration: const Duration(milliseconds: 280),
                       itemAnimationCurve: Curves.easeInOut,
-                      panelShowDuration:
-                          const Duration(milliseconds: 420),
-                      panelHideDuration:
-                          const Duration(milliseconds: 220),
+                      panelShowDuration: const Duration(milliseconds: 420),
+                      panelHideDuration: const Duration(milliseconds: 220),
                       panelAnimationCurve: Curves.easeOutCubic,
                       theme: const GlassBarThemeData(
                         backgroundColor: Color(0x1F88D8FF),
@@ -293,10 +296,9 @@ class _BasicPageState extends State<BasicPage> {
                           letterSpacing: 0.2,
                         ),
                         panelBackgroundColor: Color(0x1E89C2FF),
-                        panelBlur: 24,
+                        panelBlur: 40,
                         panelBorderRadius: 20,
-                        panelBorderSide:
-                            BorderSide(color: Color(0x4DFFFFFF)),
+                        panelBorderSide: BorderSide(color: Color(0x4DFFFFFF)),
                         barPadding: EdgeInsets.all(8),
                         panelPadding: EdgeInsets.all(16),
                         boxShadows: <BoxShadow>[
@@ -424,8 +426,7 @@ class _SidebarPageState extends State<SidebarPage> {
                   items: _items,
                   orientation: Axis.vertical,
                   selectedIndex: _selectedIndex,
-                  onTabChanged: (int? i) =>
-                      setState(() => _selectedIndex = i),
+                  onTabChanged: (int? i) => setState(() => _selectedIndex = i),
                   maxExtent: 320,
                   verticalPanelMaxWidth: 220,
                   rotateLabelInVertical: _rotateLabelInVertical,
@@ -450,10 +451,9 @@ class _SidebarPageState extends State<SidebarPage> {
                     ),
                     labelStyle: TextStyle(fontWeight: FontWeight.w600),
                     panelBackgroundColor: Color(0x1AC4B5FD),
-                    panelBlur: 28,
+                    panelBlur: 40,
                     panelBorderRadius: 20,
-                    panelBorderSide:
-                        BorderSide(color: Color(0x33FFFFFF)),
+                    panelBorderSide: BorderSide(color: Color(0x33FFFFFF)),
                     barPadding: EdgeInsets.all(8),
                     panelPadding: EdgeInsets.all(16),
                     boxShadows: <BoxShadow>[
@@ -574,13 +574,10 @@ class _CompactPageState extends State<CompactPage> {
                       deselectOnTapWhenSelected: true,
                       panelAutoHideDuration:
                           _autoHideEnabled ? _autoHideDuration : null,
-                      panelShowDuration:
-                          const Duration(milliseconds: 300),
-                      panelHideDuration:
-                          const Duration(milliseconds: 180),
+                      panelShowDuration: const Duration(milliseconds: 300),
+                      panelHideDuration: const Duration(milliseconds: 180),
                       panelAnimationCurve: Curves.fastOutSlowIn,
-                      itemAnimationDuration:
-                          const Duration(milliseconds: 200),
+                      itemAnimationDuration: const Duration(milliseconds: 200),
                       itemAnimationCurve: Curves.easeOutCubic,
                       theme: const GlassBarThemeData(
                         backgroundColor: Color(0x1AF97316),
@@ -595,10 +592,9 @@ class _CompactPageState extends State<CompactPage> {
                         ),
                         labelStyle: TextStyle(fontWeight: FontWeight.w700),
                         panelBackgroundColor: Color(0x1AFED7AA),
-                        panelBlur: 20,
+                        panelBlur: 32,
                         panelBorderRadius: 16,
-                        panelBorderSide:
-                            BorderSide(color: Color(0x33FFFFFF)),
+                        panelBorderSide: BorderSide(color: Color(0x33FFFFFF)),
                         barPadding: EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 6,
@@ -842,9 +838,8 @@ class _CompactControls extends StatelessWidget {
               style: TextStyle(fontSize: 11, color: Colors.white54),
             ),
             Slider(
-              value: autoHideDuration.inMilliseconds
-                  .toDouble()
-                  .clamp(500, 5000),
+              value:
+                  autoHideDuration.inMilliseconds.toDouble().clamp(500, 5000),
               min: 500,
               max: 5000,
               divisions: 18,
@@ -882,8 +877,7 @@ class _FeatureChips extends StatelessWidget {
       children: features
           .map(
             (String f) => Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.07),
                 borderRadius: BorderRadius.circular(20),
@@ -940,8 +934,7 @@ class _ToggleChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 11,
             color: value ? Colors.purpleAccent : Colors.white38,
-            fontWeight:
-                value ? FontWeight.w600 : FontWeight.w400,
+            fontWeight: value ? FontWeight.w600 : FontWeight.w400,
           ),
         ),
       ),
@@ -966,8 +959,7 @@ class _IndexChip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: selected
               ? Colors.orange.withValues(alpha: 0.25)
@@ -983,8 +975,7 @@ class _IndexChip extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12,
-            fontWeight:
-                selected ? FontWeight.w700 : FontWeight.w400,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
             color: selected ? Colors.orange : Colors.white54,
           ),
         ),
