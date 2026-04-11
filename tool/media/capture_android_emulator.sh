@@ -10,6 +10,8 @@ PACKAGE_NAME="${PACKAGE_NAME:-com.example.glass_bar_example}"
 ACTIVITY_NAME="${ACTIVITY_NAME:-.MainActivity}"
 SCREENSHOT_DELAY_MS="${SCREENSHOT_DELAY_MS:-180}"
 FRAME_PAUSE_MS="${FRAME_PAUSE_MS:-900}"
+MAX_FRAMES="${MAX_FRAMES:-30}"
+AUTO_GIF="${AUTO_GIF:-true}"
 
 mkdir -p "$FRAMES_DIR"
 find "$FRAMES_DIR" -maxdepth 1 -type f -name 'frame_*.png' -delete
@@ -95,29 +97,80 @@ main() {
   sleep 10
 
   local frame=0
-  capture_frame "$(printf '%03d' "$frame")"
-  frame=$((frame + 1))
+  local manual_capture=false
+  if [ "${MANUAL:-true}" != "false" ] && [ -t 0 ]; then
+    manual_capture=true
+  fi
 
-  local -a taps=(
-    "25 28"
-    "50 28"
-    "75 28"
-    "25 70"
-    "50 70"
-    "75 70"
-  )
+  if [ "$manual_capture" = true ]; then
+    log "Interactive capture mode is on."
+    log "Press Space to capture the current frame."
+    log "Press Esc to finish and build the GIF."
+    log "Frames will be written to $FRAMES_DIR"
 
-  for tap in "${taps[@]}"; do
-    tap_pct "${tap%% *}" "${tap##* }"
-    sleep "$(awk "BEGIN { printf \"%.3f\", $SCREENSHOT_DELAY_MS / 1000 }")"
+    local old_stty
+    old_stty="$(stty -g)"
+    cleanup() {
+      stty "$old_stty" >/dev/null 2>&1 || true
+    }
+    trap cleanup EXIT INT TERM
+    stty raw -echo
+
+    while IFS= read -rsn1 key; do
+      case "$key" in
+        " ")
+          sleep "$(awk "BEGIN { printf \"%.3f\", $SCREENSHOT_DELAY_MS / 1000 }")"
+          capture_frame "$(printf '%03d' "$frame")"
+          frame=$((frame + 1))
+          if [ "$frame" -ge "$MAX_FRAMES" ]; then
+            log "Reached MAX_FRAMES=$MAX_FRAMES."
+            break
+          fi
+          ;;
+        $'\e')
+          log "Stopping capture (escape key)."
+          break
+          ;;
+        $'\003')
+          log "Stopping capture (ctrl+c)."
+          break
+          ;;
+      esac
+    done
+
+    cleanup
+    trap - EXIT INT TERM
+  else
     capture_frame "$(printf '%03d' "$frame")"
     frame=$((frame + 1))
-    sleep "$(awk "BEGIN { printf \"%.3f\", $FRAME_PAUSE_MS / 1000 }")"
-    capture_frame "$(printf '%03d' "$frame")"
-    frame=$((frame + 1))
-  done
+
+    local -a taps=(
+      "25 28"
+      "50 28"
+      "75 28"
+      "25 70"
+      "50 70"
+      "75 70"
+    )
+
+    for tap in "${taps[@]}"; do
+      tap_pct "${tap%% *}" "${tap##* }"
+      sleep "$(awk "BEGIN { printf \"%.3f\", $SCREENSHOT_DELAY_MS / 1000 }")"
+      capture_frame "$(printf '%03d' "$frame")"
+      frame=$((frame + 1))
+      sleep "$(awk "BEGIN { printf \"%.3f\", $FRAME_PAUSE_MS / 1000 }")"
+      capture_frame "$(printf '%03d' "$frame")"
+      frame=$((frame + 1))
+    done
+  fi
 
   log "Frames saved to $FRAMES_DIR"
+
+  if [ "$AUTO_GIF" != "false" ] && [ "$frame" -gt 0 ]; then
+    log "Building GIF from captured frames..."
+    bash tool/media/make_demo_gif.sh
+    log "GIF written to doc/media/glass_bar_demo.gif"
+  fi
 }
 
 main "$@"

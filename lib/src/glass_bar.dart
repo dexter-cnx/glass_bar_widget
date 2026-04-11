@@ -120,7 +120,8 @@ class _GlassBarState extends State<GlassBar>
   late ImageFilter _barBlurFilter;
   late ImageFilter _panelBlurFilter;
 
-  int? get _effectiveIndex => widget.selectedIndex ?? _internalIndex;
+  int? get _effectiveIndex =>
+      widget.isControlled ? widget.selectedIndex : _internalIndex;
   bool get _isHorizontal => widget.orientation == Axis.horizontal;
   GlassBarThemeData get _theme {
     final base = widget.theme ?? const GlassBarThemeData();
@@ -144,7 +145,7 @@ class _GlassBarState extends State<GlassBar>
   @override
   void initState() {
     super.initState();
-    _internalIndex = widget.selectedIndex == null ? widget.initialIndex : null;
+    _internalIndex = widget.isControlled ? null : widget.initialIndex;
     _lastValidIndex = _effectiveIndex;
     _rebuildFilters();
 
@@ -191,7 +192,8 @@ class _GlassBarState extends State<GlassBar>
     }
 
     final index = _effectiveIndex;
-    final oldIndex = oldWidget.selectedIndex ?? _internalIndex;
+    final oldIndex =
+        oldWidget.isControlled ? oldWidget.selectedIndex : _internalIndex;
     if (index != oldIndex) {
       _syncPanelWithIndex(index);
     }
@@ -228,8 +230,13 @@ class _GlassBarState extends State<GlassBar>
     }
     _autoHideTimer?.cancel();
     _autoHideTimer = Timer(autoHide, () {
-      _setSelectedIndex(null);
+      _autoHidePanel();
     });
+  }
+
+  void _autoHidePanel() {
+    _autoHideTimer?.cancel();
+    _panelController.reverse();
   }
 
   void _handleTap(int index) {
@@ -278,15 +285,29 @@ class _GlassBarState extends State<GlassBar>
 
   @override
   Widget build(BuildContext context) {
-    Widget child = Flex(
-      direction: _isHorizontal ? Axis.vertical : Axis.horizontal,
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment:
-          _isHorizontal ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-      children: _isHorizontal
-          ? <Widget>[_buildPanel(), _buildBar(context)]
-          : <Widget>[_buildBar(context), _buildPanel()],
-    );
+    Widget child = _isHorizontal
+        ? Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              _buildBar(context),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 64,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: _buildPanel(),
+                ),
+              ),
+            ],
+          )
+        : Flex(
+            direction: Axis.horizontal,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[_buildBar(context), _buildPanel()],
+          );
 
     if (widget.useSafeArea) {
       child = SafeArea(top: false, left: false, right: false, child: child);
@@ -477,7 +498,11 @@ class _GlassBarState extends State<GlassBar>
     );
   }
 
-  List<Widget> _buildItemContent(int index, bool isSelected) {
+  List<Widget> _buildItemContent(
+    int index,
+    bool isSelected, {
+    bool useExpanded = false,
+  }) {
     final item = widget.items[index];
     final color =
         isSelected ? _theme.selectedItemColor : _theme.unselectedItemColor;
@@ -504,16 +529,20 @@ class _GlassBarState extends State<GlassBar>
         ? (item.activeLabelStyle ?? item.labelStyle ?? _theme.labelStyle)
         : (item.labelStyle ?? _theme.labelStyle);
 
-    final labelWidget = Flexible(
-      child: DefaultTextStyle(
-        style: baseStyle.copyWith(color: color),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
-        child: (!_isHorizontal && widget.rotateLabelInVertical)
-            ? RotatedBox(quarterTurns: 3, child: item.effectiveLabel)
-            : item.effectiveLabel,
-      ),
+    final labelChild = DefaultTextStyle(
+      style: baseStyle.copyWith(color: color),
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
+      child: (!_isHorizontal && widget.rotateLabelInVertical)
+          ? RotatedBox(quarterTurns: 3, child: item.effectiveLabel)
+          : item.effectiveLabel,
     );
+    final labelWidget = useExpanded && isSelected && _isHorizontal
+        ? Flexible(
+            fit: FlexFit.loose,
+            child: labelChild,
+          )
+        : Flexible(child: labelChild);
 
     final spacing =
         SizedBox(width: _isHorizontal ? 8 : 0, height: _isHorizontal ? 0 : 8);

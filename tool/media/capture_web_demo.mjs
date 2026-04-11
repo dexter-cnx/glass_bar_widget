@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
@@ -9,6 +10,7 @@ const headless = (process.env.HEADLESS ?? 'false').toLowerCase() === 'true';
 const manual = (process.env.MANUAL ?? 'true').toLowerCase() !== 'false';
 const appMode = (process.env.APP_MODE ?? 'true').toLowerCase() !== 'false';
 const maxFrames = Number(process.env.MAX_FRAMES ?? 30);
+const autoGif = (process.env.AUTO_GIF ?? 'true').toLowerCase() !== 'false';
 const viewport = { width: 390, height: 844 };
 fs.mkdirSync(framesDir, { recursive: true });
 
@@ -50,44 +52,105 @@ await page.waitForTimeout(2500);
 await page.screenshot({ path: path.join(outDir, 'glass_bar_demo.png'), fullPage: true });
 
 let frame = 0;
-if (manual) {
-  console.log('Interactive capture mode is on.');
-  console.log('Click buttons in the browser to record frames.');
-  console.log(`Frames will be written to ${framesDir}`);
-  console.log('Press Enter in this terminal to stop recording.');
+let stopRequested = false;
+let isCapturing = false;
+let finishRequested = false;
+const canReadTerminalKeys = process.stdin.isTTY;
 
-  let stop = false;
-  process.stdin.setEncoding('utf8');
-  process.stdin.resume();
-  process.stdin.once('data', () => {
-    stop = true;
-  });
-
-  await page.exposeFunction('recordCaptureFrame', async () => {
-    if (stop || frame >= maxFrames) {
-      return;
-    }
+async function captureFrame() {
+  if (stopRequested || isCapturing || frame >= maxFrames) {
+    return;
+  }
+  isCapturing = true;
+  try {
     await page.waitForTimeout(180);
     const frameName = `frame_${String(frame).padStart(3, '0')}.png`;
     await page.screenshot({ path: path.join(framesDir, frameName) });
     frame += 1;
     console.log(`Captured ${frameName}`);
+  } finally {
+    isCapturing = false;
+  }
+}
+
+function requestStop(reason) {
+  if (stopRequested) {
+    return;
+  }
+  stopRequested = true;
+  console.log(`Stopping capture (${reason}).`);
+}
+
+function requestFinish(reason) {
+  if (finishRequested) {
+    return;
+  }
+  finishRequested = true;
+  requestStop(reason);
+}
+
+if (manual) {
+  if (!canReadTerminalKeys) {
+    console.log('stdin is not a TTY; falling back to automated capture mode.');
+  }
+}
+
+if (manual && canReadTerminalKeys) {
+  console.log('Interactive capture mode is on.');
+  console.log('Press Space to record a frame.');
+  console.log('Press Esc to finish and build the GIF.');
+  console.log(`Frames will be written to ${framesDir}`);
+  console.log('You can press keys in this terminal or while the browser window is focused.');
+
+  await page.exposeFunction('recordCaptureFrame', async () => {
+    await captureFrame();
+  });
+  await page.exposeFunction('finishCapture', async () => {
+    requestFinish('escape key');
   });
 
   await page.evaluate(() => {
     document.addEventListener(
-      'click',
-      () => {
-        // @ts-ignore
-        globalThis.recordCaptureFrame();
+      'keydown',
+      (event) => {
+        if (event.code === 'Space') {
+          event.preventDefault();
+          // @ts-ignore
+          globalThis.recordCaptureFrame();
+        }
+        if (event.code === 'Escape') {
+          event.preventDefault();
+          // @ts-ignore
+          globalThis.finishCapture();
+        }
       },
       true,
     );
   });
 
-  while (!stop && frame < maxFrames) {
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.on('data', async (chunk) => {
+    if (stopRequested) {
+      return;
+    }
+    if (chunk.length === 1 && chunk[0] === 32) {
+      await captureFrame();
+      return;
+    }
+    if (chunk.length === 1 && chunk[0] === 27) {
+      requestFinish('escape key');
+      return;
+    }
+    if (chunk.length === 1 && chunk[0] === 3) {
+      requestFinish('ctrl+c');
+    }
+  });
+
+  while (!stopRequested && frame < maxFrames) {
     await page.waitForTimeout(250);
   }
+  process.stdin.setRawMode(false);
   process.stdin.pause();
 } else {
   // Fallback automated sequence for non-interactive runs.
@@ -111,3 +174,17 @@ if (manual) {
 }
 
 await browser.close();
+
+if (autoGif) {
+  const hasFrames = frame > 0;
+  if (hasFrames) {
+    console.log('Building GIF from captured frames...');
+    execFileSync('bash', ['tool/media/make_demo_gif.sh'], { stdio: 'inherit' });
+  } else {
+    console.log('No frames captured, skipping GIF build.');
+  }
+}
+
+if (finishRequested) {
+  console.log('Capture finished.');
+}

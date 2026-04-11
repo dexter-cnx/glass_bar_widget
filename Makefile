@@ -1,6 +1,6 @@
 SHELL := /bin/sh
 
-.PHONY: help get format analyze test check publish-dry-run demo-get demo-build-web media-android clean
+.PHONY: help get format analyze test check publish-dry-run demo-get demo-build-web media-android media-web-browser clean
 
 help:
 	@printf '%s\n' \
@@ -14,6 +14,7 @@ help:
 		'  make demo-get         Install example app dependencies' \
 		'  make demo-build-web   Build the Flutter web demo' \
 		'  make media-android    Capture media using Android emulator' \
+		'  make media-web-browser Capture frames via browser Playwright tool and build GIF' \
 		'  make clean            Remove build artifacts'
 
 get:
@@ -41,6 +42,9 @@ demo-build-web:
 
 media-android:
 	bash tool/media/capture_android_emulator.sh
+
+media-web-browser:
+	node tool/media/capture_web_demo.mjs
 
 clean:
 	flutter clean
