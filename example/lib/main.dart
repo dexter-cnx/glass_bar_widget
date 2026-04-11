@@ -176,39 +176,37 @@ List<GlassBarItem> _buildItems() => <GlassBarItem>[
         ),
       ),
       GlassBarItem(
-        iconData: Icons.apps_rounded,
-        activeIconData: Icons.apps,
-        labelText: 'Apps',
-        tooltip: 'Apps',
-        badgeText: '12',
-        panelContent: _buildPanelContent(
-          'Popular Apps',
-          <String>['Figma', 'Notion', 'Spotify', 'Linear'],
-        ),
-      ),
-      GlassBarItem(
-        iconData: Icons.widgets_rounded,
-        activeIconData: Icons.widgets,
-        labelText: 'Components',
-        tooltip: 'Components',
-        panelContent: _buildPanelContent(
-          'UI Components',
-          <String>[
-            'Glass Card',
-            'Neumorphic Button',
-            'Floating Action',
-            'Animated List'
+        iconData: Icons.explore_rounded,
+        labelText: 'Explore',
+        panelContent: const _PanelContent(
+          title: 'Explore',
+          items: <String>[
+            'Trending',
+            'Categories',
+            'Recommended',
+            'Collections'
           ],
         ),
       ),
       GlassBarItem(
-        iconData: Icons.note_alt_rounded,
-        activeIconData: Icons.note_alt,
-        labelText: 'Notes',
-        tooltip: 'Notes',
-        panelContent: _buildPanelContent(
-          'Quick Notes',
-          <String>['Meetings', 'Idea #42', 'Shopping List', 'Roadmap'],
+        iconData: Icons.notifications_rounded,
+        labelText: 'Alerts',
+        panelContent: const _PanelContent(
+          title: 'Alerts',
+          items: <String>[
+            '3 unread',
+            'Mentions',
+            'Team updates',
+            'System events'
+          ],
+        ),
+      ),
+      GlassBarItem(
+        iconData: Icons.person_rounded,
+        labelText: 'Profile',
+        panelContent: const _PanelContent(
+          title: 'Profile',
+          items: <String>['Account', 'Privacy', 'Themes', 'Sign out'],
         ),
       ),
     ];
@@ -471,44 +469,293 @@ class _SidebarPageState extends State<SidebarPage> {
               content: _buildAppContent(),
             ),
           ),
-          Positioned(
-            left: 20,
-            top: 100,
-            bottom: 100,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: GlassBar(
-                orientation: Axis.vertical,
-                selectedIndex: _vIndex,
-                items: _navItems,
-                showLabelMode: ShowLabelMode.always,
-                onTabChanged: (index) {
-                  setState(() => _vIndex = index);
-                },
-                maxExtent: 500,
-                useSafeArea: false,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAppContent() {
+    final int? sel = _selectedIndex;
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            sel != null ? _tabLabels[sel] : 'Select a section',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 1.2,
+              children: List<Widget>.generate(
+                6,
+                (int i) => _ContentCard(index: i),
               ),
             ),
           ),
-          Positioned(
-            left: 100,
-            right: 20,
-            bottom: 24,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: GlassBar(
-                orientation: Axis.horizontal,
-                selectedIndex: _hIndex,
-                items: _navItems,
-                selectedIconScale: 1.3,
-                enableHapticFeedback: true,
-                enableDragToChangeTab: true,
-                onTabChanged: (index) {
-                  setState(() => _hIndex = index);
-                },
-                iconAfterLabel: true,
-                rippleColor: Colors.white24,
-                elevation: 2,
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Page 3 · Compact ─────────────────────────────────────────────────────────
+// Dense layout — fully controlled selectedIndex + panelAutoHideDuration.
+// Features: selectedIndex (controlled), panelAutoHideDuration,
+//           expandSelectedItem: false, itemAnimationCurve: easeOutCubic,
+//           panelAnimationCurve: fastOutSlowIn, GlassBarThemeData (orange).
+
+class CompactPage extends StatefulWidget {
+  const CompactPage({super.key});
+
+  @override
+  State<CompactPage> createState() => _CompactPageState();
+}
+
+class _CompactPageState extends State<CompactPage> {
+  late final List<GlassBarItem> _items;
+  int? _selectedIndex;
+  bool _autoHideEnabled = true;
+  Duration _autoHideDuration = const Duration(seconds: 2);
+
+  static const List<String> _tabLabels = <String>[
+    'Home',
+    'Explore',
+    'Alerts',
+    'Profile',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _items = _buildItems();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool useStackedLayout = constraints.maxWidth < 700;
+        final panel = _CompactFrame(
+          selectedIndex: _selectedIndex,
+          tabLabels: _tabLabels,
+          bar: GlassBar(
+            items: _items,
+            orientation: Axis.horizontal,
+            selectedIndex: _selectedIndex,
+            onTabChanged: (int? i) => setState(() => _selectedIndex = i),
+            maxExtent: 400,
+            expandSelectedItem: false,
+            deselectOnTapWhenSelected: true,
+            panelAutoHideDuration: _autoHideEnabled ? _autoHideDuration : null,
+            panelShowDuration: const Duration(milliseconds: 300),
+            panelHideDuration: const Duration(milliseconds: 180),
+            panelAnimationCurve: Curves.fastOutSlowIn,
+            itemAnimationDuration: const Duration(milliseconds: 200),
+            itemAnimationCurve: Curves.easeOutCubic,
+            theme: const GlassBarThemeData(
+              backgroundColor: Color(0x1AF97316),
+              selectedItemBackgroundColor: Color(0x33FED7AA),
+              selectedItemColor: Colors.white,
+              unselectedItemColor: Color(0xBFFFFFFF),
+              blur: 18,
+              borderRadius: 20,
+              borderSide: BorderSide(
+                color: Color(0x55F97316),
+                width: 1.2,
+              ),
+              labelStyle: TextStyle(fontWeight: FontWeight.w700),
+              panelBackgroundColor: Color(0x1AFED7AA),
+              panelBlur: 32,
+              panelBorderRadius: 16,
+              panelBorderSide: BorderSide(color: Color(0x33FFFFFF)),
+              barPadding: EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 6,
+              ),
+              panelPadding: EdgeInsets.all(14),
+              boxShadows: <BoxShadow>[
+                BoxShadow(
+                  color: Color(0x40000000),
+                  blurRadius: 18,
+                  offset: Offset(0, 8),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        final controls = _CompactControls(
+          selectedIndex: _selectedIndex,
+          itemCount: _items.length,
+          autoHideEnabled: _autoHideEnabled,
+          autoHideDuration: _autoHideDuration,
+          onSelectIndex: (int? i) => setState(() => _selectedIndex = i),
+          onAutoHideChanged: (bool v) => setState(() => _autoHideEnabled = v),
+          onDurationChanged: (Duration d) =>
+              setState(() => _autoHideDuration = d),
+        );
+
+        return Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+              child: _FeatureChips(const <String>[
+                'selectedIndex (controlled)',
+                'panelAutoHideDuration',
+                'expandSelectedItem: false',
+                'itemAnimationCurve: easeOutCubic',
+                'panelAnimationCurve: fastOutSlowIn',
+              ]),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: useStackedLayout
+                    ? Column(
+                        children: <Widget>[
+                          Expanded(child: panel),
+                          const SizedBox(height: 14),
+                          SizedBox(
+                            height: 260,
+                            child: controls,
+                          ),
+                        ],
+                      )
+                    : Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(child: panel),
+                          const SizedBox(width: 14),
+                          SizedBox(width: 210, child: controls),
+                        ],
+                      ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+// ─── Reusable layout widgets ──────────────────────────────────────────────────
+
+class _PhoneMockup extends StatelessWidget {
+  const _PhoneMockup({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 360,
+      height: 660,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(40),
+        color: const Color(0xFF090E1C),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.14),
+          width: 1.5,
+        ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.55),
+            blurRadius: 40,
+            offset: const Offset(0, 20),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(38.5),
+        child: child,
+      ),
+    );
+  }
+}
+
+class _DesktopFrame extends StatelessWidget {
+  const _DesktopFrame({
+    required this.sidebar,
+    required this.content,
+  });
+
+  final Widget sidebar;
+  final Widget content;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: Colors.white.withValues(alpha: 0.04),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.09)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Row(
+          children: <Widget>[
+            IntrinsicWidth(child: sidebar),
+            Container(
+              width: 1,
+              color: Colors.white.withValues(alpha: 0.08),
+            ),
+            Expanded(child: content),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CompactFrame extends StatelessWidget {
+  const _CompactFrame({
+    required this.bar,
+    required this.selectedIndex,
+    required this.tabLabels,
+  });
+
+  final Widget bar;
+  final int? selectedIndex;
+  final List<String> tabLabels;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: Colors.white.withValues(alpha: 0.04),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.09)),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            selectedIndex != null ? tabLabels[selectedIndex!] : 'Tap a tab',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 1.35,
+              children: List<Widget>.generate(
+                4,
+                (int i) => _ContentCard(index: i),
               ),
             ),
           ),
