@@ -357,7 +357,9 @@ class _GlassBarState extends State<GlassBar>
                 curve: widget.itemAnimationCurve,
                 child: Flex(
                   direction: _isHorizontal ? Axis.horizontal : Axis.vertical,
-                  mainAxisSize: (widget.maxExtent != null && isSelected)
+                  mainAxisSize: (widget.maxExtent != null &&
+                          isSelected &&
+                          widget.expandSelectedItem)
                       ? MainAxisSize.max
                       : MainAxisSize.min,
                   children: _buildItemContent(
@@ -399,7 +401,7 @@ class _GlassBarState extends State<GlassBar>
           ? RotatedBox(quarterTurns: 3, child: item.effectiveLabel)
           : item.effectiveLabel,
     );
-    final labelWidget = useExpanded
+    final labelWidget = useExpanded && isSelected && _isHorizontal
         ? Flexible(
             fit: FlexFit.loose,
             child: labelChild,

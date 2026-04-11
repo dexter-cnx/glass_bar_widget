@@ -27,12 +27,18 @@ After serving the built web demo locally, you can capture screenshots with:
 make media-web-browser
 ```
 
-The Playwright script (`tool/media/capture_web_demo.mjs`) outputs:
+The Playwright script (`tool/media/capture_web_demo.mjs`) now uses a manual key-driven workflow:
+- press `Space` to capture the current frame
+- press `Esc` to finish and build the GIF
+
+It outputs:
 - `doc/media/glass_bar_demo.png`
 - interaction frames under `doc/media/frames/`
+- `doc/media/glass_bar_demo.gif`
 
 Useful environment variables:
 - `DEMO_URL` (default: `http://127.0.0.1:8080`)
 - `MANUAL` (`true`/`false`)
 - `HEADLESS` (`true`/`false`)
 - `MAX_FRAMES` (default: `30`)
+- `AUTO_GIF` (`true`/`false`)

@@ -16,7 +16,24 @@ This repository includes media tooling for generating:
 
 ## Local run
 
+For the web demo, use the browser capture tool:
+
+```bash
+make media-web-browser
+```
+
+In interactive mode:
+
+- press `Space` to capture the current frame
+- press `Esc` to finish and build the GIF
+
+For the Android example:
+
 The Android-emulator capture script expects an Android emulator with `adb` access.
+In interactive mode, it uses the same key workflow:
+
+- press `Space` to capture the current frame
+- press `Esc` to finish and build the GIF
 
 ```sh
 bash tool/media/capture_android_emulator.sh

@@ -14,7 +14,7 @@ help:
 		'  make demo-get         Install example app dependencies' \
 		'  make demo-build-web   Build the Flutter web demo' \
 		'  make media-android    Capture media using Android emulator' \
-		'  make media-web-browser Capture screenshot/frames via browser Playwright tool' \
+		'  make media-web-browser Capture frames via browser Playwright tool and build GIF' \
 		'  make clean            Remove build artifacts'
 
 get:

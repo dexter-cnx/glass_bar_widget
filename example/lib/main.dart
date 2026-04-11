@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:glass_bar/glass_bar.dart';
 
 void main() {
@@ -542,97 +541,108 @@ class _CompactPageState extends State<CompactPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-          child: _FeatureChips(const <String>[
-            'selectedIndex (controlled)',
-            'panelAutoHideDuration',
-            'expandSelectedItem: false',
-            'itemAnimationCurve: easeOutCubic',
-            'panelAnimationCurve: fastOutSlowIn',
-          ]),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: _CompactFrame(
-                    selectedIndex: _selectedIndex,
-                    tabLabels: _tabLabels,
-                    bar: GlassBar(
-                      items: _items,
-                      orientation: Axis.horizontal,
-                      selectedIndex: _selectedIndex,
-                      onTabChanged: (int? i) =>
-                          setState(() => _selectedIndex = i),
-                      maxExtent: 400,
-                      expandSelectedItem: false,
-                      deselectOnTapWhenSelected: true,
-                      panelAutoHideDuration:
-                          _autoHideEnabled ? _autoHideDuration : null,
-                      panelShowDuration: const Duration(milliseconds: 300),
-                      panelHideDuration: const Duration(milliseconds: 180),
-                      panelAnimationCurve: Curves.fastOutSlowIn,
-                      itemAnimationDuration: const Duration(milliseconds: 200),
-                      itemAnimationCurve: Curves.easeOutCubic,
-                      theme: const GlassBarThemeData(
-                        backgroundColor: Color(0x1AF97316),
-                        selectedItemBackgroundColor: Color(0x33FED7AA),
-                        selectedItemColor: Colors.white,
-                        unselectedItemColor: Color(0xBFFFFFFF),
-                        blur: 18,
-                        borderRadius: 20,
-                        borderSide: BorderSide(
-                          color: Color(0x55F97316),
-                          width: 1.2,
-                        ),
-                        labelStyle: TextStyle(fontWeight: FontWeight.w700),
-                        panelBackgroundColor: Color(0x1AFED7AA),
-                        panelBlur: 32,
-                        panelBorderRadius: 16,
-                        panelBorderSide: BorderSide(color: Color(0x33FFFFFF)),
-                        barPadding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        panelPadding: EdgeInsets.all(14),
-                        boxShadows: <BoxShadow>[
-                          BoxShadow(
-                            color: Color(0x40000000),
-                            blurRadius: 18,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 14),
-                SizedBox(
-                  width: 210,
-                  child: _CompactControls(
-                    selectedIndex: _selectedIndex,
-                    itemCount: _items.length,
-                    autoHideEnabled: _autoHideEnabled,
-                    autoHideDuration: _autoHideDuration,
-                    onSelectIndex: (int? i) =>
-                        setState(() => _selectedIndex = i),
-                    onAutoHideChanged: (bool v) =>
-                        setState(() => _autoHideEnabled = v),
-                    onDurationChanged: (Duration d) =>
-                        setState(() => _autoHideDuration = d),
-                  ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool useStackedLayout = constraints.maxWidth < 700;
+        final panel = _CompactFrame(
+          selectedIndex: _selectedIndex,
+          tabLabels: _tabLabels,
+          bar: GlassBar(
+            items: _items,
+            orientation: Axis.horizontal,
+            selectedIndex: _selectedIndex,
+            onTabChanged: (int? i) => setState(() => _selectedIndex = i),
+            maxExtent: 400,
+            expandSelectedItem: false,
+            deselectOnTapWhenSelected: true,
+            panelAutoHideDuration: _autoHideEnabled ? _autoHideDuration : null,
+            panelShowDuration: const Duration(milliseconds: 300),
+            panelHideDuration: const Duration(milliseconds: 180),
+            panelAnimationCurve: Curves.fastOutSlowIn,
+            itemAnimationDuration: const Duration(milliseconds: 200),
+            itemAnimationCurve: Curves.easeOutCubic,
+            theme: const GlassBarThemeData(
+              backgroundColor: Color(0x1AF97316),
+              selectedItemBackgroundColor: Color(0x33FED7AA),
+              selectedItemColor: Colors.white,
+              unselectedItemColor: Color(0xBFFFFFFF),
+              blur: 18,
+              borderRadius: 20,
+              borderSide: BorderSide(
+                color: Color(0x55F97316),
+                width: 1.2,
+              ),
+              labelStyle: TextStyle(fontWeight: FontWeight.w700),
+              panelBackgroundColor: Color(0x1AFED7AA),
+              panelBlur: 32,
+              panelBorderRadius: 16,
+              panelBorderSide: BorderSide(color: Color(0x33FFFFFF)),
+              barPadding: EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 6,
+              ),
+              panelPadding: EdgeInsets.all(14),
+              boxShadows: <BoxShadow>[
+                BoxShadow(
+                  color: Color(0x40000000),
+                  blurRadius: 18,
+                  offset: Offset(0, 8),
                 ),
               ],
             ),
           ),
-        ),
-      ],
+        );
+
+        final controls = _CompactControls(
+          selectedIndex: _selectedIndex,
+          itemCount: _items.length,
+          autoHideEnabled: _autoHideEnabled,
+          autoHideDuration: _autoHideDuration,
+          onSelectIndex: (int? i) => setState(() => _selectedIndex = i),
+          onAutoHideChanged: (bool v) => setState(() => _autoHideEnabled = v),
+          onDurationChanged: (Duration d) =>
+              setState(() => _autoHideDuration = d),
+        );
+
+        return Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+              child: _FeatureChips(const <String>[
+                'selectedIndex (controlled)',
+                'panelAutoHideDuration',
+                'expandSelectedItem: false',
+                'itemAnimationCurve: easeOutCubic',
+                'panelAnimationCurve: fastOutSlowIn',
+              ]),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: useStackedLayout
+                    ? Column(
+                        children: <Widget>[
+                          Expanded(child: panel),
+                          const SizedBox(height: 14),
+                          SizedBox(
+                            height: 260,
+                            child: controls,
+                          ),
+                        ],
+                      )
+                    : Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(child: panel),
+                          const SizedBox(width: 14),
+                          SizedBox(width: 210, child: controls),
+                        ],
+                      ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -785,79 +795,81 @@ class _CompactControls extends StatelessWidget {
         color: Colors.white.withValues(alpha: 0.06),
         border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const Text(
-            'Controls',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'selectedIndex:',
-            style: TextStyle(fontSize: 11, color: Colors.white54),
-          ),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: <Widget>[
-              ...List<Widget>.generate(
-                itemCount,
-                (int i) => _IndexChip(
-                  label: '$i',
-                  selected: selectedIndex == i,
-                  onTap: () => onSelectIndex(i),
-                ),
-              ),
-              _IndexChip(
-                label: 'null',
-                selected: selectedIndex == null,
-                onTap: () => onSelectIndex(null),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: <Widget>[
-              const Expanded(
-                child: Text(
-                  'Auto hide panel',
-                  style: TextStyle(fontSize: 13),
-                ),
-              ),
-              Switch.adaptive(
-                value: autoHideEnabled,
-                onChanged: onAutoHideChanged,
-              ),
-            ],
-          ),
-          if (autoHideEnabled) ...<Widget>[
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
             const Text(
-              'Delay:',
+              'Controls',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'selectedIndex:',
               style: TextStyle(fontSize: 11, color: Colors.white54),
             ),
-            Slider(
-              value:
-                  autoHideDuration.inMilliseconds.toDouble().clamp(500, 5000),
-              min: 500,
-              max: 5000,
-              divisions: 18,
-              onChanged: (double v) =>
-                  onDurationChanged(Duration(milliseconds: v.round())),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: <Widget>[
+                ...List<Widget>.generate(
+                  itemCount,
+                  (int i) => _IndexChip(
+                    label: '$i',
+                    selected: selectedIndex == i,
+                    onTap: () => onSelectIndex(i),
+                  ),
+                ),
+                _IndexChip(
+                  label: 'null',
+                  selected: selectedIndex == null,
+                  onTap: () => onSelectIndex(null),
+                ),
+              ],
             ),
+            const SizedBox(height: 14),
+            Row(
+              children: <Widget>[
+                const Expanded(
+                  child: Text(
+                    'Auto hide panel',
+                    style: TextStyle(fontSize: 13),
+                  ),
+                ),
+                Switch.adaptive(
+                  value: autoHideEnabled,
+                  onChanged: onAutoHideChanged,
+                ),
+              ],
+            ),
+            if (autoHideEnabled) ...<Widget>[
+              const Text(
+                'Delay:',
+                style: TextStyle(fontSize: 11, color: Colors.white54),
+              ),
+              Slider(
+                value:
+                    autoHideDuration.inMilliseconds.toDouble().clamp(500, 5000),
+                min: 500,
+                max: 5000,
+                divisions: 18,
+                onChanged: (double v) =>
+                    onDurationChanged(Duration(milliseconds: v.round())),
+              ),
+              Text(
+                '${autoHideDuration.inMilliseconds} ms',
+                style: const TextStyle(fontSize: 11, color: Colors.white38),
+              ),
+            ],
+            const SizedBox(height: 10),
             Text(
-              '${autoHideDuration.inMilliseconds} ms',
+              'Active index: ${selectedIndex?.toString() ?? 'null'}',
               style: const TextStyle(fontSize: 11, color: Colors.white38),
             ),
           ],
-          const SizedBox(height: 10),
-          Text(
-            'Active index: ${selectedIndex?.toString() ?? 'null'}',
-            style: const TextStyle(fontSize: 11, color: Colors.white38),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -1001,7 +1013,7 @@ class _ContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final child = Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
         gradient: LinearGradient(
@@ -1021,7 +1033,17 @@ class _ContentCard extends StatelessWidget {
           color: _accents[index % _accents.length].withValues(alpha: 0.8),
         ),
       ),
-    ).animate().fadeIn(delay: (70 + index * 25).ms);
+    );
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: Duration(milliseconds: 250 + index * 25),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Opacity(opacity: value, child: child);
+      },
+      child: child,
+    );
   }
 }
 

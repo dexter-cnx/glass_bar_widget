@@ -117,6 +117,13 @@ make media-web-browser
 This command runs `tool/media/capture_web_demo.mjs` and writes output into `doc/media/`.
 By default it expects a running web demo at `http://127.0.0.1:8080` and starts in manual capture mode.
 
+Manual capture workflow:
+
+1. Open the demo and navigate to the mode you want.
+2. Press `Space` to capture the current frame.
+3. Press `Esc` to finish.
+4. The script will combine all captured frames into `doc/media/glass_bar_demo.gif`.
+
 ## Publish checklist
 
 See [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md).
