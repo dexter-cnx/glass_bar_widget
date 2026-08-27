@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "title": "GlassBar",
+    "tagline": "แพ็กเกจ navigation bar สำหรับ Flutter แบบ glassmorphism รองรับหลาย layout และ interaction ที่ปรับแต่งได้",
+    "status": "active",
+    "version": "1.0.0"
+  },
+  "summary": {
+    "short": "GlassBar เป็นแพ็กเกจ navigation สำหรับ Flutter รองรับ layout แนวนอนและแนวตั้ง, panel แบบ pinned หรือ auto-hide, controlled/uncontrolled selection, theme, badge, accessibility และ haptic feedback",
+    "long": "แพ็กเกจมีตัวเลือก blur, selected indicator, drag-to-change-tab, safe area, panel timing, จำกัด extent, accessibility semantics, CI และ GitHub Pages demo"
+  },
+  "highlights": [
+    "Bottom bar แนวนอนและ sidebar แนวตั้ง",
+    "Pinned panel พร้อม optional auto-hide",
+    "Controlled และ uncontrolled selection",
+    "Theme, accessibility, badge และ haptic ปรับแต่งได้"
+  ],
+  "tech": ["Dart", "Flutter"],
+  "links": {
+    "repository": "https://github.com/dexter-cnx/glass_bar_widget",
+    "homepage": "https://dexter-cnx.github.io/glass_bar_widget/",
+    "package": "https://pub.dev/packages/glass_bar",
+    "docs": null,
+    "demo": "https://dexter-cnx.github.io/glass_bar_widget/"
+  },
+  "updatedAt": "2026-08-27T00:00:00Z"
+}
