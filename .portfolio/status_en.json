@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "title": "GlassBar",
+    "tagline": "A Flutter navigation bar package with glassmorphism, adaptive layouts, and flexible interaction behavior.",
+    "status": "active",
+    "version": "1.0.0"
+  },
+  "summary": {
+    "short": "GlassBar is a Flutter navigation package supporting horizontal and vertical layouts, pinned or auto-hidden panels, controlled and uncontrolled selection, theming, badges, accessibility, and optional haptics.",
+    "long": "The package includes configurable blur, selected indicators, drag-to-change-tab behavior, safe-area handling, panel timing, responsive extent constraints, accessibility semantics, CI, and a GitHub Pages demo."
+  },
+  "highlights": [
+    "Horizontal bottom bar and vertical sidebar layouts",
+    "Pinned panels with optional auto-hide",
+    "Controlled and uncontrolled selection modes",
+    "Flexible theming, accessibility, badges, and haptics"
+  ],
+  "tech": ["Dart", "Flutter"],
+  "links": {
+    "repository": "https://github.com/dexter-cnx/glass_bar_widget",
+    "homepage": "https://dexter-cnx.github.io/glass_bar_widget/",
+    "package": "https://pub.dev/packages/glass_bar",
+    "docs": null,
+    "demo": "https://dexter-cnx.github.io/glass_bar_widget/"
+  },
+  "updatedAt": "2026-08-27T00:00:00Z"
+}
